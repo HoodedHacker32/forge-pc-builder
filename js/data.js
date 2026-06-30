@@ -81,7 +81,7 @@ const PARTS = {
     { id: 'gpu-rx7600',    name: 'AMD Radeon RX 7600 8GB',    price: 269, tdp: 165, length: 204, psu_min: 450, spec: '1080p value' },
     { id: 'gpu-rx7800xt',  name: 'AMD Radeon RX 7800 XT',     price: 519, tdp: 263, length: 267, psu_min: 700, spec: '1440p ultra · 16GB' },
     { id: 'gpu-rx7900xtx', name: 'AMD Radeon RX 7900 XTX',    price: 949, tdp: 355, length: 287, psu_min: 800, spec: '4K · 24GB raster monster', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Sapphire_AMD_Radeon_RX_7900_XTX.jpg/512px-Sapphire_AMD_Radeon_RX_7900_XTX.jpg' },
-    { id: 'gpu-arc-b580',  name: 'Intel Arc B580 12GB',       price: 279, tdp: 190, length: 272, psu_min: 500, spec: '1440p value · 12GB' },
+    { id: 'gpu-arc-b580',  name: 'Intel Arc B580 12GB',       price: 279, tdp: 190, length: 272, psu_min: 500, spec: '1440p value · 12GB', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Intel_Arc_Battlemage_B580_Limited_Edition.jpg/512px-Intel_Arc_Battlemage_B580_Limited_Edition.jpg' },
   ],
 
   /* -------------------------------------------------------- Storage ---- */
