@@ -133,14 +133,22 @@ and/or `.modal-backdrop[hidden]{display:none}`). This was the first thing to fix
 2. [DONE] **Part detail pages** — hash route `#/part/<id>`, full specs, live compatibility,
    price, Add/Remove, keyboard + Escape support. Implemented in `app.js` (renderDetail/
    router/openDetail). Cards now open the detail; a quick-add button adds without leaving.
-3. [INFRA DONE, IMAGES PENDING] **Real product images.** `partThumb()` renders `p.img`
-   (a real photo) with automatic `onerror` fallback to the SVG `partArt`. **No `img` fields
-   are populated yet.** Reason: this sandbox has **no outbound network** (curl to image
-   hosts returns 000) and WebFetch on brand sites times out, so per-SKU photos can't be
-   sourced/verified here. To add them: set `img` on each part in `js/data.js` to a stable,
-   hotlink-friendly **https** URL (retailer/brand CDN or Wikimedia Special:FilePath). The
-   user's browser loads them client-side, so they work on Pages even though the sandbox
-   can't fetch them. The fallback keeps the UI clean for any that 404.
+3. [INFRA DONE, IMAGES PARTIAL] **Real product images.** `partThumb()` renders `p.img`
+   (a real photo) with automatic `onerror` fallback to the SVG `partArt`. **3 of 70 parts
+   have real photos** so far (RTX 4090, RX 7900 XTX, Arc B580) — all the others fall back to
+   the SVG illustration. Reason it's only 3: this sandbox has **no outbound network** (curl
+   returns 000) so images can't be downloaded/verified here, and free, correctly-matched
+   per-SKU product photos are scarce (Wikimedia mostly has die-shots or video screenshots
+   for the rest). **Working pattern to add more:** set `img` on a part in `js/data.js` to
+   `https://commons.wikimedia.org/wiki/Special:FilePath/<Exact_File_Name>.jpg?width=600`
+   (the officially-supported hotlink endpoint — 301-redirects to the canonical thumb; the
+   user's browser loads it client-side, so it works on Pages even though the sandbox can't).
+   Verify a candidate file exists by WebFetching the Special:FilePath URL and checking it
+   redirects to a real `upload.wikimedia.org/...thumb...` URL. The `onerror` fallback keeps
+   the UI clean for any that fail, so it is safe to add URLs you can't render here. Avoid
+   die-shots / video-screenshot files — prefer filenames that clearly name the retail card
+   (e.g. `Asus_Strix_RTX_4090.jpg`). For non-GPU parts, retailer/brand CDN URLs also work
+   if hotlink-friendly + https; the user can paste preferred URLs to wire in directly.
 4. [DONE] Mobile-first refinements (detail layout, touch targets, breakpoints).
 5. [DONE] GitHub repo + Pages.
 6. [BLOCKED] Email the owner the full parts list. The **Gmail connector is not connected**
