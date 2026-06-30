@@ -77,10 +77,10 @@ const PARTS = {
     { id: 'gpu-rtx4070s',  name: 'NVIDIA RTX 4070 Super',     price: 619, tdp: 220, length: 280, psu_min: 650, spec: '1440p ultra · DLSS 3' },
     { id: 'gpu-rtx4070tis',name: 'NVIDIA RTX 4070 Ti Super',  price: 819, tdp: 285, length: 305, psu_min: 700, spec: '1440p/4K · 16GB' },
     { id: 'gpu-rtx4080s',  name: 'NVIDIA RTX 4080 Super',     price: 1069,tdp: 320, length: 336, psu_min: 750, spec: '4K high refresh' },
-    { id: 'gpu-rtx4090',   name: 'NVIDIA RTX 4090 24GB',      price: 1899,tdp: 450, length: 358, psu_min: 850, spec: '4K no compromise · enormous' },
+    { id: 'gpu-rtx4090',   name: 'NVIDIA RTX 4090 24GB',      price: 1899,tdp: 450, length: 358, psu_min: 850, spec: '4K no compromise · enormous', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Asus_Strix_RTX_4090.jpg/512px-Asus_Strix_RTX_4090.jpg' },
     { id: 'gpu-rx7600',    name: 'AMD Radeon RX 7600 8GB',    price: 269, tdp: 165, length: 204, psu_min: 450, spec: '1080p value' },
     { id: 'gpu-rx7800xt',  name: 'AMD Radeon RX 7800 XT',     price: 519, tdp: 263, length: 267, psu_min: 700, spec: '1440p ultra · 16GB' },
-    { id: 'gpu-rx7900xtx', name: 'AMD Radeon RX 7900 XTX',    price: 949, tdp: 355, length: 287, psu_min: 800, spec: '4K · 24GB raster monster' },
+    { id: 'gpu-rx7900xtx', name: 'AMD Radeon RX 7900 XTX',    price: 949, tdp: 355, length: 287, psu_min: 800, spec: '4K · 24GB raster monster', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Sapphire_AMD_Radeon_RX_7900_XTX.jpg/512px-Sapphire_AMD_Radeon_RX_7900_XTX.jpg' },
     { id: 'gpu-arc-b580',  name: 'Intel Arc B580 12GB',       price: 279, tdp: 190, length: 272, psu_min: 500, spec: '1440p value · 12GB' },
   ],
 
