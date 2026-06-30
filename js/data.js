@@ -37,7 +37,7 @@ const PARTS = {
     { id: 'cpu-i5-12400f', name: 'Intel Core i5-12400F',    price: 139, socket: 'LGA1700', mem: ['DDR4','DDR5'], tdp: 117, igpu: false, cores: 6, spec: '6P/12T · superb value', cooler_inc: true },
     { id: 'cpu-i5-14600k', name: 'Intel Core i5-14600K',    price: 269, socket: 'LGA1700', mem: ['DDR4','DDR5'], tdp: 181, igpu: true,  cores: 14, spec: '6P+8E/20T · 5.3GHz · iGPU' },
     { id: 'cpu-i7-14700k', name: 'Intel Core i7-14700K',    price: 379, socket: 'LGA1700', mem: ['DDR4','DDR5'], tdp: 253, igpu: true,  cores: 20, spec: '8P+12E/28T · 5.6GHz · iGPU' },
-    { id: 'cpu-i9-14900k', name: 'Intel Core i9-14900K',    price: 549, socket: 'LGA1700', mem: ['DDR4','DDR5'], tdp: 253, igpu: true,  cores: 24, spec: '8P+16E/32T · 6.0GHz · iGPU' },
+    { id: 'cpu-i9-14900k', name: 'Intel Core i9-14900K',    price: 549, socket: 'LGA1700', mem: ['DDR4','DDR5'], tdp: 253, igpu: true,  cores: 24, spec: '8P+16E/32T · 6.0GHz · iGPU', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Intel_i9-14900K.webp?width=600' },
     { id: 'cpu-cu5-245k',  name: 'Intel Core Ultra 5 245K', price: 309, socket: 'LGA1851', mem: 'DDR5', tdp: 159, igpu: true,  cores: 14, spec: '6P+8E/14T · Arrow Lake · iGPU' },
     { id: 'cpu-cu7-265k',  name: 'Intel Core Ultra 7 265K', price: 409, socket: 'LGA1851', mem: 'DDR5', tdp: 250, igpu: true,  cores: 20, spec: '8P+12E/20T · Arrow Lake · iGPU' },
     { id: 'cpu-cu9-285k',  name: 'Intel Core Ultra 9 285K', price: 619, socket: 'LGA1851', mem: 'DDR5', tdp: 250, igpu: true,  cores: 24, spec: '8P+16E/24T · flagship · iGPU' },
@@ -107,7 +107,7 @@ const PARTS = {
 
   /* ---------------------------------------------------------- Cases ---- */
   case: [
-    { id: 'case-o11',    name: 'Lian Li O11 Dynamic EVO',  price: 159, form: 'ATX',     gpu_max: 422, cooler_max: 167, psu_form: 'ATX', spec: 'ATX · dual-chamber · glass showcase' },
+    { id: 'case-o11',    name: 'Lian Li O11 Dynamic EVO',  price: 159, form: 'ATX',     gpu_max: 422, cooler_max: 167, psu_form: 'ATX', spec: 'ATX · dual-chamber · glass showcase', img: 'https://commons.wikimedia.org/wiki/Special:FilePath/PC-Geh%C3%A4use_%22Lian_Li_O11_Dynamic_Evo_XL%22_(der8auer-Edition)_20240407_HOF1973_RAW-Export_000167.png?width=600' },
     { id: 'case-4000d',  name: 'Corsair 4000D Airflow',    price: 99,  form: 'ATX',     gpu_max: 360, cooler_max: 170, psu_form: 'ATX', spec: 'ATX · superb airflow · value' },
     { id: 'case-pop',    name: 'Fractal Pop Air',          price: 89,  form: 'ATX',     gpu_max: 405, cooler_max: 170, psu_form: 'ATX', spec: 'ATX · mesh front · colourful' },
     { id: 'case-north',  name: 'Fractal North',            price: 139, form: 'ATX',     gpu_max: 355, cooler_max: 170, psu_form: 'ATX', spec: 'ATX · walnut + mesh · gorgeous' },
