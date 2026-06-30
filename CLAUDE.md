@@ -134,9 +134,10 @@ and/or `.modal-backdrop[hidden]{display:none}`). This was the first thing to fix
    price, Add/Remove, keyboard + Escape support. Implemented in `app.js` (renderDetail/
    router/openDetail). Cards now open the detail; a quick-add button adds without leaving.
 3. [INFRA DONE, IMAGES PARTIAL] **Real product images.** `partThumb()` renders `p.img`
-   (a real photo) with automatic `onerror` fallback to the SVG `partArt`. **3 of 70 parts
-   have real photos** so far (RTX 4090, RX 7900 XTX, Arc B580) — all the others fall back to
-   the SVG illustration. Reason it's only 3: this sandbox has **no outbound network** (curl
+   (a real photo) with automatic `onerror` fallback to the SVG `partArt`. **5 of 70 parts
+   have real photos** so far (RTX 4090, RX 7900 XTX, Arc B580, i9-14900K, Lian Li O11
+   Dynamic) — all the others fall back to the SVG illustration. Reason it's only 5: this
+   sandbox has **no outbound network** (curl
    returns 000) so images can't be downloaded/verified here, and free, correctly-matched
    per-SKU product photos are scarce (Wikimedia mostly has die-shots or video screenshots
    for the rest). **Working pattern to add more:** set `img` on a part in `js/data.js` to
