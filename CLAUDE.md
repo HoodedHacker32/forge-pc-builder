@@ -119,14 +119,31 @@ overlay is always rendered at `z-index: 60`, transparent, covering the whole vie
 intercepting every click. Fix: make `[hidden]` win (e.g. `[hidden]{display:none!important}`
 and/or `.modal-backdrop[hidden]{display:none}`). This was the first thing to fix.
 
-## Open tasks (requested 2026-06-30)
+## Repo & deployment
 
-1. [bug] Fix the overlay-eats-clicks issue above so buttons work.
-2. [feature] **Part detail pages** — clicking a part opens a detail view (hash route
-   `#part/<id>`, works on GitHub Pages) with full specs, compatibility notes vs current
-   build, price, and an "Add to build" button — viewable *before* adding.
-3. [feature] **Real product images** on the detail pages, sourced from an actual retailer
-   or the brand. Use a graceful fallback to the SVG `partArt` if an image fails to load.
-4. [polish] Mobile-first refinements without harming desktop.
-5. [infra] GitHub repo (done early), GitHub **Pages** deployment.
-6. [task] Email the owner a list of every part via the Gmail connector.
+- GitHub repo: **https://github.com/HoodedHacker32/forge-pc-builder** (public).
+- Live site (GitHub Pages, main branch / root): **https://hoodedhacker32.github.io/forge-pc-builder/**.
+- Pages was enabled via `gh api -X POST repos/.../pages -f source[branch]=main -f source[path]=/`.
+- Pushing to `main` redeploys automatically (build_type: legacy). First deploy can take a
+  couple of minutes.
+
+## Open tasks (requested 2026-06-30) — status
+
+1. [DONE] Fix the overlay-eats-clicks bug — `[hidden]{display:none!important}`.
+2. [DONE] **Part detail pages** — hash route `#/part/<id>`, full specs, live compatibility,
+   price, Add/Remove, keyboard + Escape support. Implemented in `app.js` (renderDetail/
+   router/openDetail). Cards now open the detail; a quick-add button adds without leaving.
+3. [INFRA DONE, IMAGES PENDING] **Real product images.** `partThumb()` renders `p.img`
+   (a real photo) with automatic `onerror` fallback to the SVG `partArt`. **No `img` fields
+   are populated yet.** Reason: this sandbox has **no outbound network** (curl to image
+   hosts returns 000) and WebFetch on brand sites times out, so per-SKU photos can't be
+   sourced/verified here. To add them: set `img` on each part in `js/data.js` to a stable,
+   hotlink-friendly **https** URL (retailer/brand CDN or Wikimedia Special:FilePath). The
+   user's browser loads them client-side, so they work on Pages even though the sandbox
+   can't fetch them. The fallback keeps the UI clean for any that 404.
+4. [DONE] Mobile-first refinements (detail layout, touch targets, breakpoints).
+5. [DONE] GitHub repo + Pages.
+6. [BLOCKED] Email the owner the full parts list. The **Gmail connector is not connected**
+   to the account (`create_draft` returns "requires authentication"). Once the user connects
+   Gmail, create a draft to elliotactoncarey@gmail.com — a generator script pattern is in
+   the git history (node one-liner over `js/data.js`). 70 parts total.
