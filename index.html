@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050506" />
+  <meta name="description" content="Forge — build the perfect gaming PC with real-time compatibility checking and live price estimates in euros." />
+  <title>Forge · Gaming PC Builder</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="aurora" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 7v10l8 5 8-5V7z"/><path d="M12 22V12"/><path d="m4 7 8 5 8-5"/></svg>
+      </span>
+      <div class="brand-text">
+        <h1>Forge</h1>
+        <p>Gaming PC Builder</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="health-pill" id="healthPill" title="Build health">
+        <span class="health-dot"></span>
+        <span id="healthLabel">Empty build</span>
+      </div>
+      <button class="ghost-btn" id="presetBtn" type="button" title="Start from a curated build">Presets</button>
+      <button class="ghost-btn" id="resetBtn" type="button" title="Clear the build">Reset</button>
+      <button class="ghost-btn install-btn" id="installBtn" type="button" hidden>Install app</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: Build slots -->
+    <section class="panel build-panel" id="buildPanel" aria-label="Your build">
+      <button class="panel-head build-toggle" id="buildToggle" type="button" aria-expanded="true" aria-controls="slotList">
+        <span class="panel-head-main">
+          <h2>Your build</h2>
+          <span class="muted" id="slotProgress">0 / 7 essentials</span>
+        </span>
+        <span class="chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+      </button>
+      <div class="slot-collapse" id="slotCollapse">
+        <ul class="slot-list" id="slotList"></ul>
+      </div>
+    </section>
+
+    <!-- CENTER: Catalog -->
+    <section class="panel catalog-panel" aria-label="Parts catalog">
+      <div class="catalog-head">
+        <div class="catalog-title">
+          <h2 id="catalogTitle">Choose a category</h2>
+          <p class="muted" id="catalogSub">Pick a slot on the left, or browse a category below.</p>
+        </div>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="searchInput" placeholder="Search parts…" autocomplete="off" />
+        </div>
+      </div>
+
+      <nav class="cat-tabs" id="catTabs" aria-label="Categories"></nav>
+
+      <div class="compat-banner" id="compatBanner" hidden></div>
+
+      <div class="part-grid" id="partGrid"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <p>No parts match your filter.</p>
+      </div>
+    </section>
+
+    <!-- RIGHT: Summary -->
+    <aside class="panel summary-panel" aria-label="Summary">
+      <div class="summary-sticky">
+        <div class="price-card">
+          <span class="muted">Estimated total</span>
+          <div class="price-big"><span class="cur">€</span><span id="totalPrice">0</span></div>
+          <div class="price-meta">
+            <span id="partCount">0 parts</span>
+            <span class="dot-sep">·</span>
+            <span id="wattReadout">0 W est. draw</span>
+          </div>
+        </div>
+
+        <div class="report" id="report">
+          <h3>Compatibility report</h3>
+          <ul class="report-list" id="reportList">
+            <li class="report-item neutral">Add parts to see live compatibility checks.</li>
+          </ul>
+        </div>
+
+        <div class="psu-meter" id="psuMeter" hidden>
+          <div class="psu-meter-head">
+            <span>PSU load</span>
+            <span id="psuLoadText">—</span>
+          </div>
+          <div class="psu-bar"><span id="psuBarFill"></span></div>
+          <p class="muted small" id="psuHint"></p>
+        </div>
+
+        <button class="primary-btn" id="shareBtn" type="button">Copy build summary</button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Preset modal -->
+  <div class="modal-backdrop" id="presetModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="presetHeading">
+      <div class="modal-head">
+        <h2 id="presetHeading">Curated builds</h2>
+        <button class="icon-btn" id="presetClose" aria-label="Close">✕</button>
+      </div>
+      <div class="preset-grid" id="presetGrid"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/compat.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
