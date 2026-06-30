@@ -25,6 +25,7 @@
     presetModal: $('presetModal'), presetGrid: $('presetGrid'), presetClose: $('presetClose'),
     toast: $('toast'), installBtn: $('installBtn'),
     buildPanel: $('buildPanel'), buildToggle: $('buildToggle'), slotCollapse: $('slotCollapse'),
+    partDetail: $('partDetail'),
   };
 
   /* ---- Icons (inline SVG) ---- */
@@ -46,6 +47,70 @@
     `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`;
 
   const fmtPrice = (n) => Number(n).toLocaleString('en-IE');
+  const fmtCap = (gb) => gb >= 1000 ? (gb / 1000) + ' TB' : gb + ' GB';
+  const esc = (s) => String(s).replace(/"/g, '&quot;');
+
+  /* Find a part (and its category) by id across the whole catalog. */
+  function findPart(id) {
+    for (const cat of Object.keys(PARTS)) {
+      const part = PARTS[cat].find(p => p.id === id);
+      if (part) return { cat, part };
+    }
+    return null;
+  }
+
+  /* Card thumbnail / detail hero: real product photo if present, else SVG art.
+     The <img> falls back to the SVG illustration if the photo fails to load. */
+  function partThumb(cat, p) {
+    const art = partArt(cat, p);
+    if (!p.img) return art;
+    return `<img class="part-photo" src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"
+      onerror="this.parentNode.classList.add('photo-failed');this.remove();" />
+      <span class="art-fallback">${art}</span>`;
+  }
+
+  /* Human-readable spec rows per category for the detail page. */
+  const SPEC_FIELDS = {
+    cpu: [
+      ['Socket', p => p.socket], ['Cores / threads', p => p.spec.split(' · ')[0]],
+      ['Memory support', p => Array.isArray(p.mem) ? p.mem.join(' / ') : p.mem],
+      ['TDP (heat output)', p => p.tdp + ' W'],
+      ['Integrated graphics', p => p.igpu ? 'Yes — runs a display with no GPU' : 'No — needs a graphics card'],
+      ['Cooler included', p => p.cooler_inc ? 'Yes' : 'No — buy a cooler'],
+    ],
+    mobo: [
+      ['Socket', p => p.socket], ['Memory', p => Array.isArray(p.mem) ? p.mem.join(' / ') : p.mem],
+      ['Form factor', p => p.form], ['M.2 slots', p => p.m2], ['PCIe', p => p.pcie + ' (graphics slot)'],
+      ['Wi-Fi', p => p.wifi ? 'Built-in' : 'Not included — use Ethernet or add a card'],
+    ],
+    ram: [
+      ['Type', p => p.mem], ['Capacity', p => fmtCap(p.size)], ['Kit', p => p.spec.split(' · ')[0]],
+      ['Shortage note', p => p.shortage ? '⚠ Priced up by the 2026 DRAM shortage' : '—'],
+    ],
+    gpu: [
+      ['TDP (power draw)', p => p.tdp + ' W'], ['Length', p => p.length + ' mm'],
+      ['Min. recommended PSU', p => p.psu_min + ' W'], ['Best for', p => p.spec],
+    ],
+    storage: [
+      ['Interface', p => p.iface === 'M.2' ? 'M.2 NVMe (needs an M.2 slot)' : 'SATA'],
+      ['Capacity', p => fmtCap(p.size)], ['Notes', p => p.spec],
+    ],
+    psu: [
+      ['Wattage', p => p.watt + ' W'], ['Efficiency', p => '80+ ' + p.rating],
+      ['Form factor', p => p.form], ['Notes', p => p.spec],
+    ],
+    case: [
+      ['Form factor', p => p.form + ' (fits this size board & smaller)'],
+      ['Max GPU length', p => p.gpu_max + ' mm'], ['Max air cooler height', p => p.cooler_max + ' mm'],
+      ['Power supply', p => p.psu_form + ' form factor'],
+    ],
+    cooler: [
+      ['Type', p => p.type === 'aio' ? 'Liquid AIO (radiator)' : 'Air tower'],
+      ['Size', p => p.type === 'aio' ? p.rad + ' mm radiator' : p.height + ' mm tall'],
+      ['Handles up to', p => p.tdp_max + ' W CPUs'],
+      ['Sockets', p => p.sockets.join(', ')],
+    ],
+  };
 
   /* ---- Persistence ---- */
   function save() {
@@ -155,8 +220,8 @@
           ? `<span class="part-flag warn">${svg('warn', 13)} Check fit</span>`
           : '';
       const shortageTag = p.shortage ? `<span class="shortage-tag" title="Affected by the 2026 DRAM shortage">⚠ Shortage</span>` : '';
-      return `<button class="part-card ${selected ? 'selected' : ''} flag-${flag}" data-part="${p.id}">
-        <div class="part-media">${partArt(activeCat, p)}${shortageTag}</div>
+      return `<article class="part-card ${selected ? 'selected' : ''} flag-${flag}" data-part="${p.id}" role="button" tabindex="0" aria-label="View ${p.name} details">
+        <div class="part-media">${partThumb(activeCat, p)}${shortageTag}</div>
         <div class="part-top">
           <h3>${p.name}</h3>
           <span class="part-price">${p.price === 0 ? 'Free' : '€' + fmtPrice(p.price)}</span>
@@ -164,9 +229,9 @@
         <p class="part-spec">${p.spec || ''}</p>
         <div class="part-foot">
           ${flagBadge || '<span class="part-flag ok">' + svg('check', 13) + ' Compatible</span>'}
-          <span class="part-action">${selected ? 'Selected ✓' : 'Add to build'}</span>
+          <button class="quick-add ${selected ? 'added' : ''}" data-quickadd="${p.id}" aria-label="${selected ? 'Remove from build' : 'Add to build'}">${selected ? 'Added ✓' : '+ Add'}</button>
         </div>
-      </button>`;
+      </article>`;
     }).join('');
   }
 
@@ -269,6 +334,93 @@
     renderParts();
     renderSummary();
   }
+
+  /* ============================================= DETAIL PAGE / ROUTER == */
+
+  function renderDetail(id) {
+    const found = findPart(id);
+    if (!found) { location.hash = ''; return; }
+    const { cat, part } = found;
+    const category = CATEGORIES.find(c => c.id === cat);
+    const selected = build[cat] && build[cat].id === part.id;
+
+    // Live compatibility of this part against the current build.
+    const hypo = Object.assign({}, build, { [cat]: part });
+    const issues = analyse(hypo).filter(i => i.slot === cat);
+    const order = { error: 0, warn: 1, info: 2, ok: 3 };
+    issues.sort((a, b) => order[a.severity] - order[b.severity]);
+    const compatHtml = issues.length
+      ? issues.map(i => {
+          const ico = i.severity === 'error' ? 'err' : i.severity === 'warn' ? 'warn' : i.severity === 'info' ? 'info' : 'check';
+          return `<li class="report-item ${i.severity}">${svg(ico, 15)}<span>${i.msg}</span></li>`;
+        }).join('')
+      : `<li class="report-item info">${svg('info', 15)}<span>Pick other parts to see how this fits your build.</span></li>`;
+
+    const rows = (SPEC_FIELDS[cat] || []).map(([label, get]) => {
+      let val; try { val = get(part); } catch (e) { val = '—'; }
+      return `<div class="spec-row"><dt>${label}</dt><dd>${val}</dd></div>`;
+    }).join('');
+
+    el.partDetail.innerHTML = `
+      <div class="detail-inner">
+        <div class="detail-bar">
+          <button class="detail-back" id="detailBack" aria-label="Back to catalog">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            <span>Back</span>
+          </button>
+          <span class="detail-cat">${category.name}</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-media">
+            ${part.shortage ? '<span class="shortage-tag">⚠ Shortage</span>' : ''}
+            ${partThumb(cat, part)}
+          </div>
+          <div class="detail-info">
+            <h2>${part.name}</h2>
+            <p class="detail-spec">${part.spec || ''}</p>
+            <div class="detail-pricerow">
+              <span class="detail-price">${part.price === 0 ? 'Free' : '€' + fmtPrice(part.price)}</span>
+              <button class="primary-btn detail-add ${selected ? 'is-remove' : ''}" id="detailAdd">
+                ${selected ? 'Remove from build' : 'Add to build'}
+              </button>
+            </div>
+            <h3 class="detail-h3">Specifications</h3>
+            <dl class="spec-list">${rows}</dl>
+            <h3 class="detail-h3">Compatibility with your build</h3>
+            <ul class="report-list detail-compat">${compatHtml}</ul>
+            ${part.shortage ? '<p class="detail-foot-note">⚠ Memory prices reflect the ongoing 2026 global DRAM shortage and are higher than usual.</p>' : ''}
+          </div>
+        </div>
+      </div>`;
+
+    el.partDetail.hidden = false;
+    document.body.classList.add('detail-open');
+    el.partDetail.scrollTop = 0;
+
+    $('detailBack').addEventListener('click', () => { history.length > 1 ? history.back() : (location.hash = ''); });
+    $('detailAdd').addEventListener('click', () => {
+      if (build[cat] && build[cat].id === part.id) delete build[cat];
+      else build[cat] = part;
+      save();
+      activeCat = cat;
+      renderAll();
+      renderDetail(id); // refresh the button state
+      toast(build[cat] && build[cat].id === part.id ? `${part.name} added.` : `${part.name} removed.`);
+    });
+  }
+
+  function closeDetail() {
+    el.partDetail.hidden = true;
+    el.partDetail.innerHTML = '';
+    document.body.classList.remove('detail-open');
+  }
+
+  function router() {
+    const m = location.hash.match(/^#\/part\/(.+)$/);
+    if (m) renderDetail(decodeURIComponent(m[1]));
+    else closeDetail();
+  }
+  function openDetail(id) { location.hash = '#/part/' + encodeURIComponent(id); }
 
   /* ====================================================== ACTIONS ==== */
 
@@ -401,9 +553,18 @@
   });
 
   el.partGrid.addEventListener('click', (e) => {
+    const qa = e.target.closest('[data-quickadd]');
+    if (qa) { e.stopPropagation(); togglePart(qa.dataset.quickadd); return; }
     const card = e.target.closest('[data-part]');
-    if (card) togglePart(card.dataset.part);
+    if (card) openDetail(card.dataset.part);
   });
+  el.partGrid.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('[data-part]');
+    if (card) { e.preventDefault(); openDetail(card.dataset.part); }
+  });
+
+  window.addEventListener('hashchange', router);
 
   el.search.addEventListener('input', (e) => {
     searchTerm = e.target.value.trim();
@@ -419,7 +580,11 @@
     const card = e.target.closest('[data-preset]');
     if (card) applyPreset(PRESETS.find(p => p.id === card.dataset.preset));
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePresets(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!el.presetModal.hidden) closePresets();
+    else if (!el.partDetail.hidden) location.hash = '';
+  });
 
   /* ---- Collapsible build panel (folds away on scroll) ---- */
   let manualOverride = false;     // user clicked the toggle, respect their choice
@@ -464,4 +629,5 @@
   load();
   if (!Object.keys(build).length) activeCat = 'cpu';
   renderAll();
+  router(); // handle a deep-link to #/part/<id> on first load
 })();
