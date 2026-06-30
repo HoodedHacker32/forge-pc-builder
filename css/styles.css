@@ -245,9 +245,68 @@ body {
 .part-flag.ok   { color: var(--ok);   background: rgba(70, 211, 154, 0.10); }
 .part-flag.warn { color: var(--warn); background: rgba(245, 165, 36, 0.12); }
 .part-flag.err  { color: var(--red-bright); background: rgba(255, 37, 50, 0.14); }
-.part-action { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.part-card.selected .part-action { color: var(--red-bright); }
-.part-card:hover .part-action { color: var(--text); }
+.quick-add {
+  font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--text); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--stroke-strong);
+  padding: 6px 11px; cursor: pointer; transition: all 0.14s; clip-path: var(--cut);
+}
+.quick-add:hover { background: var(--red); border-color: var(--red); color: #fff; }
+.quick-add.added { background: rgba(70, 211, 154, 0.14); border-color: rgba(70, 211, 154, 0.5); color: var(--ok); }
+
+/* Real product photo with SVG-art fallback */
+.part-photo { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+.art-fallback { display: none; width: 100%; height: 100%; }
+.part-media.photo-failed .art-fallback { display: grid; place-items: center; }
+
+/* ---- Part detail page (hash route) ---- */
+.detail-view {
+  position: fixed; inset: 0; z-index: 70; overflow-y: auto;
+  background:
+    radial-gradient(900px 600px at 85% -10%, rgba(255, 37, 50, 0.10), transparent 60%),
+    var(--bg);
+  animation: detailIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes detailIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+body.detail-open { overflow: hidden; }
+.detail-inner { max-width: 1000px; margin: 0 auto; padding: 18px clamp(16px, 5vw, 40px) 80px; }
+.detail-bar { display: flex; align-items: center; gap: 14px; position: sticky; top: 0; padding: 12px 0; z-index: 2;
+  background: linear-gradient(var(--bg), rgba(5,5,6,0.6) 70%, transparent); }
+.detail-back {
+  display: inline-flex; align-items: center; gap: 7px; font-family: var(--display); font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; color: #fff; cursor: pointer;
+  background: var(--red); border: none; padding: 10px 16px; clip-path: var(--cut); box-shadow: 0 8px 20px -10px var(--red-glow);
+}
+.detail-back:hover { background: var(--red-bright); }
+.detail-cat { font-family: var(--display); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+
+.detail-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(18px, 4vw, 36px); margin-top: 8px; }
+.detail-media {
+  position: relative; aspect-ratio: 4 / 3; border: 1px solid var(--stroke); border-top: 3px solid var(--red);
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255, 37, 50, 0.12), transparent 70%),
+    rgba(255, 255, 255, 0.02);
+  display: grid; place-items: center; overflow: hidden; position: sticky; top: 70px;
+}
+.detail-media .part-art, .detail-media .art-fallback { width: 86%; height: 86%; }
+.detail-media .part-photo { width: 100%; height: 100%; object-fit: contain; padding: 18px; }
+.detail-media .shortage-tag { z-index: 2; }
+
+.detail-info h2 { font-family: var(--display); font-size: clamp(22px, 4vw, 30px); letter-spacing: 0.01em; line-height: 1.15; }
+.detail-spec { color: var(--muted); font-size: 14px; margin-top: 8px; }
+.detail-pricerow { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 20px 0 8px; }
+.detail-price { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--red-bright); }
+.detail-add { flex: 1; min-width: 180px; }
+.detail-add.is-remove { background: rgba(255, 255, 255, 0.06); color: var(--text); box-shadow: none; }
+.detail-add.is-remove:hover { background: var(--red); color: #fff; }
+.detail-h3 { font-family: var(--display); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 26px 0 12px; }
+.spec-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--stroke); }
+.spec-row { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 14px; padding: 12px 14px; border-bottom: 1px solid var(--stroke); }
+.spec-row:last-child { border-bottom: none; }
+.spec-row:nth-child(odd) { background: rgba(255, 255, 255, 0.02); }
+.spec-row dt { color: var(--muted); font-size: 12.5px; }
+.spec-row dd { font-size: 13.5px; font-weight: 500; }
+.detail-compat { max-height: none; }
+.detail-foot-note { font-size: 12px; color: var(--warn); margin-top: 16px; }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
 
@@ -342,19 +401,30 @@ body {
   .build-panel { position: sticky; top: 76px; z-index: 30; }
   /* On mobile the build panel folds to just its header bar when collapsed. */
 }
+@media (max-width: 860px) {
+  .detail-grid { grid-template-columns: 1fr; gap: 18px; }
+  .detail-media { position: relative; top: 0; aspect-ratio: 16 / 10; max-height: 46vh; }
+}
 @media (max-width: 620px) {
   .topbar { flex-wrap: wrap; padding: 12px 16px; gap: 10px; }
   .brand-text p { display: none; }
   .topbar-actions { width: 100%; justify-content: space-between; gap: 8px; }
-  .ghost-btn { flex: 1; text-align: center; padding: 9px 8px; }
+  .ghost-btn { flex: 1; text-align: center; padding: 10px 8px; }
   .health-pill { order: -1; }
   .catalog-panel { padding: 16px; }
   .catalog-head { flex-direction: column; }
   .search-wrap { width: 100%; }
   .part-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-  .part-media { height: 96px; }
+  .part-media { height: 104px; }
   .price-big { font-size: 38px; }
   .summary-sticky > * { min-width: 100%; }
+  /* Comfortable tap targets on touch screens */
+  .quick-add { padding: 8px 12px; }
+  .cat-tab { padding: 11px 14px; }
+  .detail-pricerow { gap: 12px; }
+  .detail-add { min-width: 100%; }
+  .spec-row { grid-template-columns: 1fr; gap: 2px; }
+  .spec-row dd { font-size: 14px; }
 }
 @media (max-width: 380px) {
   .part-grid { grid-template-columns: 1fr; }
