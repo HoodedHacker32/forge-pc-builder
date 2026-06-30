@@ -35,6 +35,10 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* The `hidden` attribute must always win — otherwise an explicit `display`
+   rule (e.g. on .modal-backdrop) keeps an invisible overlay on top of the
+   page, silently intercepting every click. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--font);
