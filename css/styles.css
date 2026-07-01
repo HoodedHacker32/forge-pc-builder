@@ -388,71 +388,139 @@ body.detail-open { overflow: hidden; }
   opacity: 0; transition: opacity 0.3s, transform 0.3s; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ---- Mobile sticky summary bar (shown only on narrow screens) ---- */
-.mobile-bar { display: none; }
-@media (max-width: 900px) {
-  .mobile-bar {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
-    padding: 12px clamp(16px, 5vw, 24px); padding-bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(10, 10, 12, 0.92); backdrop-filter: blur(16px) saturate(140%);
-    border: none; border-top: 2px solid var(--red); cursor: pointer;
-    font-family: var(--font); color: var(--text); width: 100%; text-align: left;
-    box-shadow: 0 -12px 30px -12px rgba(0, 0, 0, 0.7);
-  }
-  .mobile-bar-health { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
-  .mobile-bar.ok .mobile-bar-health { color: var(--ok); }
-  .mobile-bar.warn .mobile-bar-health { color: var(--warn); }
-  .mobile-bar.error .mobile-bar-health { color: var(--red-bright); }
-  .mobile-bar-total { font-family: var(--display); font-size: 20px; font-weight: 700; margin-left: auto; }
-  .mobile-bar-total .cur { color: var(--red); font-size: 15px; }
-  .mobile-bar-cta { display: inline-flex; align-items: center; gap: 5px; font-family: var(--display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; background: var(--red); padding: 8px 12px; clip-path: var(--cut); }
-  /* Leave room so the fixed bar never covers the last of the content. */
-  .layout { padding-bottom: 84px; }
-  .detail-inner { padding-bottom: 96px; }
-}
+/* =========================================================================
+   Mobile bottom-tab navigation — hidden on desktop
+   ========================================================================= */
+.mobile-nav { display: none; }
 
-/* ---- Responsive ---- */
-@media (max-width: 1180px) {
-  .layout { grid-template-columns: 300px minmax(0, 1fr); }
+/* ---- Tablet: 2-column, summary drops to a row ---- */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .layout { grid-template-columns: 280px minmax(0, 1fr); }
   .summary-panel { grid-column: 1 / -1; }
   .summary-sticky { position: static; flex-direction: row; flex-wrap: wrap; }
   .summary-sticky > * { flex: 1; min-width: 250px; }
   .primary-btn { flex-basis: 100%; }
 }
+
+/* =========================================================================
+   MOBILE APP LAYOUT (≤900px) — one full-screen view at a time, bottom tabs
+   ========================================================================= */
 @media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; gap: 14px; }
-  .build-panel { position: sticky; top: 76px; z-index: 30; }
-  /* On mobile the build panel folds to just its header bar when collapsed. */
-}
-@media (max-width: 860px) {
-  .detail-grid { grid-template-columns: 1fr; gap: 18px; }
-  .detail-media { position: relative; top: 0; aspect-ratio: 16 / 10; max-height: 46vh; }
-}
-@media (max-width: 620px) {
-  .topbar { flex-wrap: wrap; padding: 12px 16px; gap: 10px; }
+  body { padding-bottom: 0; }
+
+  /* Compact top bar */
+  .topbar { padding: 11px 16px; gap: 10px; }
   .brand-text p { display: none; }
-  .topbar-actions { width: 100%; justify-content: space-between; gap: 8px; }
-  .ghost-btn { flex: 1; text-align: center; padding: 10px 8px; }
-  .health-pill { order: -1; }
-  .catalog-panel { padding: 16px; }
-  .catalog-head { flex-direction: column; }
-  .search-wrap { width: 100%; }
-  .part-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-  .part-media { height: 104px; }
-  .price-big { font-size: 38px; }
-  .summary-sticky > * { min-width: 100%; }
-  /* Comfortable tap targets on touch screens */
-  .quick-add { padding: 8px 12px; }
-  .cat-tab { padding: 11px 14px; }
+  .brand-mark { width: 38px; height: 38px; }
+  .health-pill { display: none; }            /* build status lives in the tab bar */
+  .topbar-actions { gap: 8px; }
+  .ghost-btn { padding: 9px 13px; font-size: 13px; }
+
+  /* One column; only the active tab's panel is shown */
+  .layout {
+    display: block; padding: 14px 14px calc(78px + env(safe-area-inset-bottom));
+    max-width: 100%;
+  }
+  .layout > .panel, .layout > .summary-panel { margin-bottom: 0; }
+  body[data-mtab="build"]   .catalog-panel,
+  body[data-mtab="build"]   .summary-panel,
+  body[data-mtab="parts"]   .build-panel,
+  body[data-mtab="parts"]   .summary-panel,
+  body[data-mtab="summary"] .build-panel,
+  body[data-mtab="summary"] .catalog-panel { display: none; }
+
+  /* Panels fill the screen, no sticky offsets */
+  .build-panel { position: static; overflow: visible; }
+  .build-panel .chevron { display: none; }   /* no collapse on mobile — it's a full tab */
+  .build-toggle { cursor: default; padding: 4px 4px 14px; }
+  .slot-collapse { grid-template-rows: 1fr !important; opacity: 1 !important; overflow: visible; }
+  .slot-list { padding: 0; }
+  .slot { padding: 13px; }
+  .slot-name { font-size: 14px; }
+  .slot-thumb { width: 58px; height: 44px; }
+
+  .catalog-panel { padding: 16px; min-height: auto; }
+  .catalog-head { flex-direction: column; align-items: stretch; gap: 12px; }
+  .catalog-title h2 { font-size: 20px; }
+  .search-wrap { width: 100%; padding: 12px 14px; }
+  .search-wrap input { font-size: 16px; }    /* ≥16px stops iOS zoom-on-focus */
+  .cat-tabs { gap: 8px; padding-bottom: 12px; -webkit-overflow-scrolling: touch; }
+  .cat-tab { padding: 11px 15px; font-size: 13.5px; }
+
+  /* Part cards become full-width, readable LIST ROWS (not a shrunken grid) */
+  .part-grid { grid-template-columns: 1fr; gap: 11px; }
+  .part-card {
+    display: grid; grid-template-columns: 104px minmax(0, 1fr);
+    grid-template-areas: "media top" "media spec" "media foot";
+    padding: 0; align-items: stretch;
+  }
+  .part-media {
+    grid-area: media; height: 100%; min-height: 108px; margin: 0;
+    border-bottom: none; border-right: 1px solid var(--stroke);
+  }
+  .part-top  { grid-area: top;  padding: 12px 14px 0; }
+  .part-spec { grid-area: spec; padding: 4px 14px; font-size: 13px; }
+  .part-foot { grid-area: foot; padding: 0 14px 12px; }
+  .part-top h3 { font-size: 15.5px; }
+  .part-price { font-size: 15px; }
+  .quick-add { padding: 9px 14px; font-size: 12px; }
+
+  /* Summary tab: single readable column */
+  .summary-panel { grid-column: auto; }
+  .summary-sticky { position: static; display: flex; flex-direction: column; gap: 14px; }
+  .summary-sticky > * { min-width: 0; width: 100%; }
+  .price-big { font-size: 40px; }
+  .report-list { max-height: none; }
+  .primary-btn { padding: 16px; font-size: 15px; }
+
+  /* Detail page: stacked, big and readable */
+  .detail-inner { padding: 14px 16px calc(96px + env(safe-area-inset-bottom)); }
+  .detail-grid { grid-template-columns: 1fr; gap: 16px; }
+  .detail-media { position: relative; top: 0; aspect-ratio: 16 / 10; max-height: 40vh; }
+  .detail-info h2 { font-size: 22px; }
+  .detail-spec { font-size: 13.5px; }
   .detail-pricerow { gap: 12px; }
-  .detail-add { min-width: 100%; }
-  .spec-row { grid-template-columns: 1fr; gap: 2px; }
-  .spec-row dd { font-size: 14px; }
+  .detail-add { min-width: 100%; order: 2; }
+  .detail-price { font-size: 28px; }
+  .spec-row { grid-template-columns: 1fr; gap: 2px; padding: 12px 14px; }
+  .spec-row dt { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .spec-row dd { font-size: 15px; }
+
+  /* Bottom tab bar */
+  .mobile-nav {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 55;
+    background: rgba(8, 8, 10, 0.96); backdrop-filter: blur(18px) saturate(140%);
+    border-top: 1px solid var(--stroke); box-shadow: 0 -10px 30px -14px rgba(0, 0, 0, 0.8);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mnav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative;
+    background: none; border: none; border-top: 2px solid transparent; cursor: pointer;
+    color: var(--muted); font-family: var(--font); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.03em; padding: 10px 4px 9px; min-height: 58px;
+  }
+  .mnav-btn.active { color: #fff; border-top-color: var(--red); background: rgba(255, 37, 50, 0.07); }
+  .mnav-btn.active svg { color: var(--red); }
+  .mnav-total { font-family: var(--display); font-size: 13px; font-weight: 700; }
+  .mnav-total .cur { color: var(--red); }
+  .mnav-badge {
+    position: absolute; top: 6px; left: 50%; transform: translateX(6px);
+    font-size: 9px; font-weight: 700; background: var(--muted-2); color: #fff;
+    padding: 1px 6px; border-radius: 8px; line-height: 1.5;
+  }
+  .mnav-badge.ok { background: var(--ok); color: #06281c; }
+  .mnav-badge.warn { background: var(--warn); color: #3a2a02; }
+  .mnav-badge.error { background: var(--red); color: #fff; }
+  .mnav-badge.empty { background: var(--muted-2); }
 }
-@media (max-width: 380px) {
-  .part-grid { grid-template-columns: 1fr; }
+
+@media (max-width: 400px) {
+  .topbar-actions .ghost-btn { padding: 9px 10px; }
+  .part-card { grid-template-columns: 88px minmax(0, 1fr); }
+  .part-media { min-height: 96px; }
 }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }

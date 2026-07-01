@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=6" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -118,14 +118,22 @@
     </aside>
   </main>
 
-  <!-- Mobile-only sticky summary bar (keeps total + health always in view) -->
-  <button class="mobile-bar" id="mobileBar" type="button" aria-label="Jump to build summary">
-    <span class="mobile-bar-health"><span class="health-dot" id="mobileHealthDot"></span><span id="mobileHealthLabel">Empty</span></span>
-    <span class="mobile-bar-total"><span class="cur">€</span><span id="mobileTotal">0</span></span>
-    <span class="mobile-bar-cta">Summary
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-    </span>
-  </button>
+  <!-- Mobile-only bottom tab navigation (desktop keeps the 3-column layout) -->
+  <nav class="mobile-nav" id="mobileNav" aria-label="Sections">
+    <button class="mnav-btn" data-mtab="build" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 7v10l8 5 8-5V7z"/><path d="m4 7 8 5 8-5"/><path d="M12 22V12"/></svg>
+      <span>Build</span>
+      <span class="mnav-badge" id="mnavBadge">0/7</span>
+    </button>
+    <button class="mnav-btn active" data-mtab="parts" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Parts</span>
+    </button>
+    <button class="mnav-btn" data-mtab="summary" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h16v18l-3-2-2 2-3-2-3 2-2-2-3 2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span class="mnav-total"><span class="cur">€</span><span id="mnavTotal">0</span></span>
+    </button>
+  </nav>
 
   <!-- Part detail route (hash: #/part/<id>) -->
   <section class="detail-view" id="partDetail" hidden aria-label="Part details"></section>
@@ -143,10 +151,10 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="js/data.js"></script>
-  <script src="js/art.js"></script>
-  <script src="js/compat.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/data.js?v=6"></script>
+  <script src="js/art.js?v=6"></script>
+  <script src="js/compat.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

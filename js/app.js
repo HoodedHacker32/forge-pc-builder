@@ -26,9 +26,10 @@
     toast: $('toast'), installBtn: $('installBtn'),
     buildPanel: $('buildPanel'), buildToggle: $('buildToggle'), slotCollapse: $('slotCollapse'),
     partDetail: $('partDetail'),
-    mobileBar: $('mobileBar'), mobileTotal: $('mobileTotal'),
-    mobileHealthDot: $('mobileHealthDot'), mobileHealthLabel: $('mobileHealthLabel'),
+    mobileNav: $('mobileNav'), mnavTotal: $('mnavTotal'), mnavBadge: $('mnavBadge'),
   };
+
+  const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
 
   /* ---- Icons (inline SVG) ---- */
   const ICONS = {
@@ -372,10 +373,10 @@
     el.healthPill.className = 'health-pill ' + cls;
     el.healthLabel.textContent = label;
 
-    // Mobile sticky bar mirrors the total + health.
-    el.mobileTotal.textContent = fmtPrice(total);
-    el.mobileHealthLabel.textContent = label;
-    el.mobileBar.className = 'mobile-bar ' + cls;
+    // Mobile bottom nav mirrors the total + essentials progress.
+    el.mnavTotal.textContent = fmtPrice(total);
+    el.mnavBadge.textContent = `${filledEssentials}/${totalEssentials}`;
+    el.mnavBadge.className = 'mnav-badge ' + cls;
   }
 
   function renderAll() {
@@ -479,10 +480,8 @@
     searchTerm = '';
     el.search.value = '';
     renderAll();
-    // On small screens, bring the catalog into view
-    if (window.matchMedia('(max-width: 900px)').matches) {
-      document.querySelector('.catalog-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    // On mobile, jump to the Parts tab so the catalog is in view.
+    if (isMobile()) setMobileTab('parts');
   }
 
   function togglePart(partId) {
@@ -623,9 +622,6 @@
 
   el.resetBtn.addEventListener('click', reset);
   el.shareBtn.addEventListener('click', shareBuild);
-  el.mobileBar.addEventListener('click', () => {
-    document.querySelector('.summary-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
   el.presetBtn.addEventListener('click', openPresets);
   el.presetClose.addEventListener('click', closePresets);
   el.presetModal.addEventListener('click', (e) => { if (e.target === el.presetModal) closePresets(); });
@@ -639,28 +635,24 @@
     else if (!el.partDetail.hidden) location.hash = '';
   });
 
-  /* ---- Collapsible build panel (folds away on scroll) ---- */
-  let manualOverride = false;     // user clicked the toggle, respect their choice
-  function setCollapsed(collapsed) {
-    el.buildPanel.classList.toggle('collapsed', collapsed);
-    el.buildToggle.setAttribute('aria-expanded', String(!collapsed));
-  }
+  /* ---- Build panel manual collapse (desktop convenience only) ---- */
   el.buildToggle.addEventListener('click', () => {
+    if (isMobile()) return; // on mobile the build panel is its own tab
     const willCollapse = !el.buildPanel.classList.contains('collapsed');
-    setCollapsed(willCollapse);
-    manualOverride = true;
+    el.buildPanel.classList.toggle('collapsed', willCollapse);
+    el.buildToggle.setAttribute('aria-expanded', String(!willCollapse));
   });
-  let lastY = window.scrollY;
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    // Near the top: always reveal and hand control back to auto-folding.
-    if (y < 80) { manualOverride = false; setCollapsed(false); lastY = y; return; }
-    if (manualOverride) { lastY = y; return; }
-    // Scrolling down past the header → fold away; scrolling up → reveal.
-    if (y > 200 && y > lastY) setCollapsed(true);
-    else if (y < lastY - 24) setCollapsed(false);
-    lastY = y;
-  }, { passive: true });
+
+  /* ---- Mobile bottom-tab navigation (Build / Parts / Summary) ---- */
+  function setMobileTab(t) {
+    document.body.dataset.mtab = t;
+    el.mobileNav.querySelectorAll('[data-mtab]').forEach(b => b.classList.toggle('active', b.dataset.mtab === t));
+    window.scrollTo(0, 0);
+  }
+  el.mobileNav.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-mtab]');
+    if (b) setMobileTab(b.dataset.mtab);
+  });
 
   /* ---- PWA install prompt ---- */
   let deferredPrompt;
@@ -681,6 +673,7 @@
   /* ---- Boot ---- */
   load();
   if (!Object.keys(build).length) activeCat = 'cpu';
+  document.body.dataset.mtab = 'parts'; // default mobile tab (ignored on desktop)
   renderAll();
   router(); // handle a deep-link to #/part/<id> on first load
 })();
