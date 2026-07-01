@@ -200,6 +200,15 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   are obvious. Handy for any future background work; not linked from the app. NOTE: the SVG is
   referenced as `hex-tile.svg?v=11` in the CSS because it has no other cache-buster — bump that
   query if you edit the tile again.
+- **2026-07-01 — catalog modernised to current gen (`v=12`):** owner: list was "terrible and
+  outdated" (no RTX 50, barely any DDR5). Retired all RTX 40 / RX 7000 GPUs; added NVIDIA RTX 50
+  (Blackwell, GDDR7): 5060 / 5060 Ti / 5070 / 5070 Ti / 5080 / 5090, AMD RX 9000 (RDNA 4): 9060 XT
+  / 9070 / 9070 XT, and Intel Arc B570. Added Ryzen 5 9600X + Ryzen 9 9950X3D. Expanded DDR5 to 7
+  kits (incl. 48/96GB and a DDR5-8000 for Arrow Lake); DDR4 kept as 2 legacy kits. Presets
+  re-pointed to the new parts (Ultra = 5090 + 1200W). The compat engine needed no changes — RTX
+  5090's `psu_min: 1000` + 575W `tdp` flow through the existing PSU/draw rules (verified: sub-1kW
+  PSUs flag error with a 5090; Ultra preset reads 832W / 1200W, no warnings). Keep specs accurate
+  and euro prices shortage-inflated for RAM.
 - **2026-07-01 — PWA / service worker removed entirely (`v=10`):** owner's call — the SW never
   delivered real value and mostly served stale files that annoyed anyone developing on it (it
   was the root of two prior render bugs). Deleted `sw.js` + `manifest.webmanifest`, the SW
