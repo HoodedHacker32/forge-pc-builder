@@ -107,12 +107,18 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
 - Build panel is **collapsible**: header toggle with animated chevron, and auto-folds on
   scroll-down / reveals on scroll-up (so it never blocks the catalog on mobile).
 - Presets modal, toast, PWA install button (`beforeinstallprompt`).
-- **Mobile UI:** below 900px the 3-column layout stacks to one column and a **fixed bottom
-  summary bar** (`#mobileBar`, hidden on desktop) keeps the live total + build health in
-  view; tapping it scrolls to the full summary. Detail page + spec table stack at ≤860/≤620.
-  NOTE: the Claude preview can't emulate a true narrow *paint* width (it paints ~1049px even
-  when `matchMedia`/`clientWidth` report 390) — verify mobile via computed styles / matchMedia
-  and on a real device, not the preview screenshot.
+- **Mobile UI (≤900px) is a purpose-built app layout, NOT the shrunk desktop.** A fixed
+  **bottom tab bar** (`#mobileNav`: Build / Parts / Summary) shows one full-screen view at a
+  time — toggled by `document.body.dataset.mtab` (`setMobileTab` in app.js) with CSS
+  `body[data-mtab="…"] .panel { display:none }`. Part cards become full-width **list rows**
+  (thumbnail + name + spec + price + Add) via a CSS grid override, not a shrunken grid. The
+  desktop 3-column layout is untouched. The old scroll-to-hide build panel + `#mobileBar`
+  were removed. Detail page + spec sheet stack and scale up. `isMobile()` gates behaviour.
+  NOTE: the Claude preview HTTP-caches `css/*` and `js/*` hard — a plain reload serves STALE
+  assets. Assets are versioned (`?v=N` in index.html + matching in `sw.js` ASSETS). **When you
+  edit CSS/JS, bump that `?v=` number in index.html AND sw.js (and the `CACHE` const)** so the
+  change actually loads. Also: the preview can't emulate a true narrow *paint* width — trust
+  `matchMedia`/computed styles + a real device over its screenshots.
 
 ## Conventions
 
