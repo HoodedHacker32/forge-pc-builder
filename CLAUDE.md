@@ -33,6 +33,12 @@ install need `http(s)://`, not `file://`).
 - The Claude preview sandbox **blocks programmatic `window.scrollTo`** and `element.click()`
   bypasses overlays — so to test real click behaviour, check `document.elementFromPoint`
   on a button's centre rather than trusting `.click()`.
+- **The service worker will serve you stale files while you iterate.** Editing CSS/JS and
+  reloading the preview is not enough — the SW cache-first-serves whatever it fetched on
+  its last install, and bumping `?v=` only busts the cache for *future* installs. After
+  every edit, clear the current one in the browser console/eval before checking results:
+  `(async()=>{const rs=await navigator.serviceWorker.getRegistrations();for(const r of rs)await r.unregister();const ks=await caches.keys();for(const k of ks)await caches.delete(k);location.reload();})()`.
+  Forgetting this step is exactly how the 2026-07-01 stale-cache bug (below) went unnoticed.
 
 ## File structure
 
@@ -129,13 +135,45 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   stale files.
 - Euros everywhere. Integers, formatted with `Intl`/`toLocaleString('en-IE')`.
 
-## Known issue found (2026-06-30) — FIX PENDING
+## Past issues fixed (kept for context — don't reintroduce these)
 
-**Root cause of "most buttons don't work":** `.modal-backdrop` sets `display: grid` in
-CSS, which **overrides the `hidden` attribute** (UA `display:none`). So the preset modal
-overlay is always rendered at `z-index: 60`, transparent, covering the whole viewport and
-intercepting every click. Fix: make `[hidden]` win (e.g. `[hidden]{display:none!important}`
-and/or `.modal-backdrop[hidden]{display:none}`). This was the first thing to fix.
+- **2026-06-30 — overlay ate every click:** `.modal-backdrop` set `display: grid` in CSS,
+  which overrode the `hidden` attribute (UA `display:none`), so the preset modal overlay
+  was always rendered at `z-index: 60`, transparent, covering the viewport. Fixed with
+  `[hidden]{display:none!important}` at the top of `styles.css` — keep that rule.
+- **2026-07-01 — stale SW cache silently broke the entire render:** `sw.js` served
+  `index.html` cache-first with no versioning. A stale cached HTML (from before the mobile
+  bottom-nav was added) paired with a fresh `app.js` that unconditionally did
+  `el.mobileNav.addEventListener(...)` at the top level — `el.mobileNav` was `null`, threw,
+  and silently killed the *entire* script (no visible error, nothing rendered: no tabs, no
+  slots, no parts). This is almost certainly what "most things stop working / look janky"
+  reports were actually seeing in production. Fixed two ways: (1) `sw.js` fetch handler now
+  goes **network-first for navigation requests** (`e.request.mode === 'navigate'`) so
+  `index.html` can never get permanently stuck stale — only the `?v=`-versioned hashed
+  assets are cache-first; (2) `app.js` wraps every `el.X.addEventListener` in a null-safe
+  `on()` helper and wraps the boot sequence in try/catch with `console.error`, so a future
+  DOM/JS mismatch degrades instead of hard-crashing silently.
+- **2026-07-01 — mobile Build tab: prices/remove-buttons clipped off-screen:**
+  `#slotCollapse` is `display:grid` with no `grid-template-columns` declared, so its single
+  implicit column sized to the content's max-content width instead of the container width
+  (classic CSS grid "blowout"). Desktop's `overflow:hidden` masked it; mobile's
+  `overflow:visible` (needed since the panel doesn't collapse there) exposed it, and
+  `body{overflow-x:hidden}` silently clipped the overflow with no scrollbar — so every
+  price and remove (×) button was invisible past ~345px in. Fixed with
+  `grid-template-columns: minmax(0, 1fr)` on `.slot-collapse`. If a similar single-column
+  grid wrapper is added elsewhere, give it `minmax(0, 1fr)` too, not bare `1fr`/`auto`.
+- **2026-07-01 — other mobile/responsive jank found via live preview testing at every
+  breakpoint** (documented so they aren't reintroduced): build-slot remove buttons only
+  showed on `:hover` (unreachable on touch — now always visible on mobile); all `:hover`
+  effects were unconditional, so tapping on touch left a stuck hover state (now wrapped in
+  `@media (hover: hover) and (pointer: fine)`); category tabs overflow horizontally with no
+  scroll affordance (added JS-driven `.fade-l`/`.fade-r` mask classes); the preset modal had
+  no internal scroll so short viewports permanently hid the last preset card(s) with no way
+  to reach them (fixed with a flex modal + scrollable `.preset-grid`, plus
+  `grid-auto-rows: max-content` — `align-content: normal` resolves to `stretch` for grid
+  containers, which was squashing card rows to fit instead of letting them overflow/scroll);
+  the toast notification overlapped and hid the mobile bottom tab bar (repositioned above it
+  on mobile). Bumped asset version to `v=8` for all of this.
 
 ## Repo & deployment
 
@@ -174,3 +212,8 @@ and/or `.modal-backdrop[hidden]{display:none}`). This was the first thing to fix
    to the account (`create_draft` returns "requires authentication"). Once the user connects
    Gmail, create a draft to elliotactoncarey@gmail.com — a generator script pattern is in
    the git history (node one-liner over `js/data.js`). 70 parts total.
+7. [DONE] Fix "UI looks janky on resize/mobile" (requested 2026-07-01) — see "Past issues
+   fixed" above. Root cause was a stale-SW-cache render crash plus a handful of genuine
+   responsive bugs (CSS grid blowout clipping prices, hover-stuck touch states, unreachable
+   modal content, toast overlapping the tab bar). All fixed and verified across breakpoints
+   (320px–1440px+, portrait and landscape) in the live preview.
