@@ -69,10 +69,13 @@ body {
     var(--bg);
 }
 /* Tileable hexagon mesh (external SVG, fill #141414) sits on the near-black base.
-   Kept subtle so the red glows and content stay dominant. */
+   Kept subtle so the red glows and content stay dominant.
+   The SVG's viewBox is cropped to exactly ONE vertical hex period (1200/7 ≈ 171.43u);
+   its 600×171.43 aspect must be preserved when tiling or the tile stops being seamless,
+   so use `300px auto` (→ 300×85.71) — never a square size like `300px 300px`. */
 .aurora::after { content: ''; position: absolute; inset: 0; opacity: 0.85;
-  background-image: url("../img/hex-tile.svg");
-  background-repeat: repeat; background-size: 300px 300px; background-position: center top;
+  background-image: url("../img/hex-tile.svg?v=11");
+  background-repeat: repeat; background-size: 300px auto; background-position: center top;
   -webkit-mask-image: radial-gradient(140% 120% at 50% 0%, #000 55%, transparent 100%);
           mask-image: radial-gradient(140% 120% at 50% 0%, #000 55%, transparent 100%);
 }

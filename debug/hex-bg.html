@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hex background debug</title>
+  <style>
+    :root {
+      --bg: #050506;
+      --tile: 300px;               /* JS-controllable */
+      --hex-src: url("../img/hex-tile.svg");
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html, body { height: 100%; }
+    body { background: var(--bg); color: #f4f4f6; font: 13px/1.5 system-ui, sans-serif; overflow: hidden; }
+
+    /* Exact replica of the app's .aurora + ::after background layer */
+    .aurora { position: fixed; inset: 0; z-index: -2; overflow: hidden;
+      background:
+        radial-gradient(900px 600px at 85% -10%, rgba(255,37,50,0.10), transparent 60%),
+        radial-gradient(700px 500px at -5% 100%, rgba(255,37,50,0.06), transparent 55%),
+        var(--bg);
+    }
+    .aurora::after { content: ''; position: absolute; inset: 0; opacity: 0.85;
+      background-image: var(--hex-src);
+      background-repeat: repeat; background-size: var(--tile) var(--tile); background-position: center top;
+    }
+
+    /* Tile-boundary overlay: a grid whose cells are exactly one tile, so any
+       break in the hex pattern at a cell edge = a seam / non-seamless tile. */
+    .grid { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .15s;
+      background-image:
+        linear-gradient(to right, rgba(0,255,120,0.9) 0 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,255,120,0.9) 0 1px, transparent 1px);
+      background-size: var(--tile) var(--tile); background-position: center top;
+    }
+    body.show-grid .grid { opacity: 1; }
+
+    .panel { position: fixed; top: 12px; left: 12px; z-index: 5;
+      background: rgba(10,10,12,0.9); border: 1px solid rgba(255,255,255,0.15);
+      padding: 12px 14px; border-radius: 8px; display: grid; gap: 8px; min-width: 220px; }
+    .panel h1 { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: #ff4651; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; background: #1a1a1e; color: #f4f4f6; border: 1px solid rgba(255,255,255,0.18); padding: 5px 9px; border-radius: 5px; }
+    button:hover { background: #ff2532; border-color: #ff2532; }
+    code { color: #9a9aa4; }
+
+    /* One raw tile, unrepeated, for inspecting the tile's own edges */
+    .single { position: fixed; bottom: 12px; right: 12px; z-index: 5;
+      width: 220px; height: 220px; border: 1px solid rgba(255,255,255,0.25);
+      background-image: var(--hex-src); background-size: 100% 100%; background-repeat: no-repeat; }
+    .single::after { content: '1 tile (600→220)'; position: absolute; top: -18px; left: 0; color: #9a9aa4; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="aurora"></div>
+  <div class="grid"></div>
+
+  <div class="panel">
+    <h1>Hex BG debug</h1>
+    <div class="row"><span>tile size</span><code id="tileVal">300px</code></div>
+    <input id="tile" type="range" min="120" max="600" step="10" value="300" />
+    <div class="row">
+      <button id="gridBtn">toggle tile grid</button>
+      <button id="opacBtn">opacity 1</button>
+    </div>
+    <div class="row"><span>seam check</span><code id="hint">edges should line up</code></div>
+  </div>
+
+  <div class="single" title="a single, unrepeated tile"></div>
+
+  <script>
+    const root = document.documentElement;
+    const tile = document.getElementById('tile');
+    const tileVal = document.getElementById('tileVal');
+    tile.addEventListener('input', () => {
+      root.style.setProperty('--tile', tile.value + 'px');
+      tileVal.textContent = tile.value + 'px';
+    });
+    document.getElementById('gridBtn').onclick = () => document.body.classList.toggle('show-grid');
+    let full = false;
+    document.getElementById('opacBtn').onclick = (e) => {
+      full = !full;
+      document.querySelector('.aurora').style.setProperty('--o', full ? 1 : .85);
+      document.styleSheets[0]; // noop
+      document.querySelector('.aurora').firstElementChild; // noop
+      const style = document.createElement('style');
+      style.textContent = `.aurora::after{opacity:${full ? 1 : .85} !important}`;
+      document.head.appendChild(style);
+      e.target.textContent = full ? 'opacity .85' : 'opacity 1';
+    };
+  </script>
+</body>
+</html>
