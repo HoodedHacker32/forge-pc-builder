@@ -103,7 +103,6 @@ body {
   background: rgba(255, 255, 255, 0.04); border: 1px solid var(--stroke);
   padding: 9px 15px; cursor: pointer; transition: all 0.16s; clip-path: var(--cut);
 }
-.install-btn { background: rgba(255, 37, 50, 0.14); border-color: rgba(255, 37, 50, 0.5); color: var(--red-bright); }
 
 .health-pill {
   display: inline-flex; align-items: center; gap: 8px;

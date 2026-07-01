@@ -5,15 +5,20 @@ it whenever architecture, conventions, or open tasks change.
 
 ## What this is
 
-**Forge** is a beautiful, installable **PWA** (Progressive Web App) that lets a user
-build a gaming PC from a broad catalogue of real-world parts. It tells you what you
-need for a functioning PC, flags compatible / incompatible combinations, explains what
-you'd need to use a different part, and gives **price estimates in euros (€)** for every
-item. Target user is European (the owner explicitly does not want USD).
+**Forge** is a beautiful gaming-PC builder that lets a user build a PC from a broad
+catalogue of real-world parts. It tells you what you need for a functioning PC, flags
+compatible / incompatible combinations, explains what you'd need to use a different part,
+and gives **price estimates in euros (€)** for every item. Target user is European (the
+owner explicitly does not want USD).
 
 It is a **static, vanilla HTML/CSS/JS app** — no framework, no build step, no
-dependencies. It must run by serving the folder over HTTP (the service worker and PWA
-install need `http(s)://`, not `file://`).
+dependencies. Serve the folder over HTTP (`python -m http.server`), not `file://`.
+
+**Not a PWA.** Service-worker / offline / installable support was **removed 2026-07-01**
+(owner: it only ever added a service worker that served stale files and annoyed anyone
+working on it). There is no `sw.js`, no `manifest.webmanifest`, no install button. A small
+one-time cleanup script in `index.html` unregisters any service worker a returning visitor
+still has and clears its caches — do **not** re-add a service worker.
 
 ## Owner / preferences
 
@@ -33,25 +38,22 @@ install need `http(s)://`, not `file://`).
 - The Claude preview sandbox **blocks programmatic `window.scrollTo`** and `element.click()`
   bypasses overlays — so to test real click behaviour, check `document.elementFromPoint`
   on a button's centre rather than trusting `.click()`.
-- **The service worker will serve you stale files while you iterate.** Editing CSS/JS and
-  reloading the preview is not enough — the SW cache-first-serves whatever it fetched on
-  its last install, and bumping `?v=` only busts the cache for *future* installs. After
-  every edit, clear the current one in the browser console/eval before checking results:
+- **The Claude preview HTTP-caches `css/*` and `js/*` hard** — a plain reload can serve
+  stale assets. Assets are versioned (`?v=N` in index.html); bump that number when you edit
+  CSS/JS so the change actually loads. If you still see stale output, clear everything in the
+  browser console/eval before checking results (also unregisters any leftover service worker):
   `(async()=>{const rs=await navigator.serviceWorker.getRegistrations();for(const r of rs)await r.unregister();const ks=await caches.keys();for(const k of ks)await caches.delete(k);location.reload();})()`.
-  Forgetting this step is exactly how the 2026-07-01 stale-cache bug (below) went unnoticed.
 
 ## File structure
 
 ```
-index.html                 # markup + script/style links + SW registration
+index.html                 # markup + script/style links + one-time SW-cleanup snippet
 css/styles.css             # all styling (theme variables at top)
 js/data.js                 # CATEGORIES, PARTS (catalog), PRESETS, SOCKET_MEM
 js/art.js                  # partArt(category, part) -> inline SVG line-art per part
 js/compat.js               # compatibility engine (pure functions)
 js/app.js                  # UI controller / state / events / persistence
-manifest.webmanifest       # PWA manifest
-sw.js                      # service worker (offline-first cache; bump CACHE on asset change)
-icons/icon.svg             # red hexagon app icon (+ icon-192.png, icon-512.png generated)
+icons/icon.svg             # red hexagon favicon (icon-192.png/icon-512.png now unused, PWA removed)
 img/hex-tile.svg           # seamless tileable hexagon-mesh background (owner-supplied, fill #141414)
 .claude/launch.json        # preview server config
 CLAUDE.md                  # this file
@@ -113,7 +115,7 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   PSU load meter, copy-summary).
 - Build panel is **collapsible**: header toggle with animated chevron, and auto-folds on
   scroll-down / reveals on scroll-up (so it never blocks the catalog on mobile).
-- Presets modal, toast, PWA install button (`beforeinstallprompt`).
+- Presets modal, toast.
 - **Mobile UI (≤900px) is a purpose-built app layout, NOT the shrunk desktop.** A fixed
   **bottom tab bar** (`#mobileNav`: Build / Parts / Summary) shows one full-screen view at a
   time — toggled by `document.body.dataset.mtab` (`setMobileTab` in app.js) with CSS
@@ -122,9 +124,8 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   desktop 3-column layout is untouched. The old scroll-to-hide build panel + `#mobileBar`
   were removed. Detail page + spec sheet stack and scale up. `isMobile()` gates behaviour.
   NOTE: the Claude preview HTTP-caches `css/*` and `js/*` hard — a plain reload serves STALE
-  assets. Assets are versioned (`?v=N` in index.html + matching in `sw.js` ASSETS). **When you
-  edit CSS/JS, bump that `?v=` number in index.html AND sw.js (and the `CACHE` const)** so the
-  change actually loads. Also: the preview can't emulate a true narrow *paint* width — trust
+  assets. Assets are versioned (`?v=N` in index.html). **When you edit CSS/JS, bump that `?v=`
+  number in index.html** so the change actually loads. Also: the preview can't emulate a true narrow *paint* width — trust
   `matchMedia`/computed styles + a real device over its screenshots.
 
 ## Conventions
@@ -132,8 +133,8 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
 - **Commit every change** (owner requirement). Small, focused commits with clear messages.
 - Keep **CLAUDE.md** in the repo and up to date — it's the shared context for all agents.
 - No dependencies / no build step. Plain ES (IIFE in app.js, globals across script files).
-- Bump `CACHE` in `sw.js` whenever cached asset list or contents change, or the SW serves
-  stale files.
+- No service worker / PWA (removed 2026-07-01) — don't re-add one. Bust preview/browser cache
+  by bumping `?v=N` in index.html.
 - Euros everywhere. Integers, formatted with `Intl`/`toLocaleString('en-IE')`.
 
 ## Past issues fixed (kept for context — don't reintroduce these)
@@ -186,6 +187,15 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   radial mask so it fades toward the bottom. Also fixed a latent version drift: `index.html`
   had been at `?v=6` while `sw.js` pre-cached `?v=8` (the pre-cache silently never matched) —
   everything is now unified at `?v=9`, and `hex-tile.svg` was added to the SW `ASSETS` list.
+- **2026-07-01 — PWA / service worker removed entirely (`v=10`):** owner's call — the SW never
+  delivered real value and mostly served stale files that annoyed anyone developing on it (it
+  was the root of two prior render bugs). Deleted `sw.js` + `manifest.webmanifest`, the SW
+  registration, the `manifest`/`apple-touch-icon` links, and the install button + its
+  `beforeinstallprompt`/`appinstalled` handlers and `.install-btn` CSS. Replaced the SW
+  registration in `index.html` with a **one-time cleanup** that unregisters any existing SW and
+  clears its caches on load, so returning visitors (incl. the live Pages site) self-heal instead
+  of staying stuck on a cached build. Assets bumped to `?v=10`. The two SW-related "past issues"
+  above are now moot but kept for history — **do not re-add a service worker.**
 
 ## Repo & deployment
 
