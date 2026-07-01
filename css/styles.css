@@ -388,6 +388,30 @@ body.detail-open { overflow: hidden; }
   opacity: 0; transition: opacity 0.3s, transform 0.3s; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* ---- Mobile sticky summary bar (shown only on narrow screens) ---- */
+.mobile-bar { display: none; }
+@media (max-width: 900px) {
+  .mobile-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+    padding: 12px clamp(16px, 5vw, 24px); padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: rgba(10, 10, 12, 0.92); backdrop-filter: blur(16px) saturate(140%);
+    border: none; border-top: 2px solid var(--red); cursor: pointer;
+    font-family: var(--font); color: var(--text); width: 100%; text-align: left;
+    box-shadow: 0 -12px 30px -12px rgba(0, 0, 0, 0.7);
+  }
+  .mobile-bar-health { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  .mobile-bar.ok .mobile-bar-health { color: var(--ok); }
+  .mobile-bar.warn .mobile-bar-health { color: var(--warn); }
+  .mobile-bar.error .mobile-bar-health { color: var(--red-bright); }
+  .mobile-bar-total { font-family: var(--display); font-size: 20px; font-weight: 700; margin-left: auto; }
+  .mobile-bar-total .cur { color: var(--red); font-size: 15px; }
+  .mobile-bar-cta { display: inline-flex; align-items: center; gap: 5px; font-family: var(--display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #fff; background: var(--red); padding: 8px 12px; clip-path: var(--cut); }
+  /* Leave room so the fixed bar never covers the last of the content. */
+  .layout { padding-bottom: 84px; }
+  .detail-inner { padding-bottom: 96px; }
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 1180px) {
   .layout { grid-template-columns: 300px minmax(0, 1fr); }

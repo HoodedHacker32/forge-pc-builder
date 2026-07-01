@@ -55,8 +55,14 @@ CLAUDE.md                  # this file
 - `CATEGORIES`: ordered list `{ id, name, icon, essential, hint }`. Slots: cpu, mobo,
   ram, gpu (optional), storage, psu, case, cooler.
 - `PARTS`: object keyed by category id → array of part objects. Every part has `id`,
-  `name`, `price` (euros, integer), `spec` (short string), plus category-specific
-  attributes the engine reasons over:
+  `name`, `price` (euros, integer), `spec` (short tagline), plus rich, **accurate
+  real-world spec fields** surfaced on the detail page via `SPEC_FIELDS` in `app.js`
+  (cpu: cores/threads/pcore/ecore/base/boost/l3/arch/memSpeed/tdpRated/igpuName; gpu:
+  vram/vramType/bus/boost/power_conn; ram: modules/speed/cl/voltage; mobo: chipset/
+  ramSlots; storage: tech/form/pcie/read/write; psu: modular/fan/atx3/power_conn; case:
+  radiator; cooler: fans). **Power note:** `tdp` = realistic PEAK power (AMD PPT / Intel
+  MTP) used by the engine + PSU sizing; `tdpRated` = nominal boxed TDP. Both are shown so
+  nothing is mislabelled. Plus the category-specific compatibility attributes:
   - cpu: `socket` (AM5/AM4/LGA1700/LGA1851), `mem`, `tdp`, `igpu`, `cores`, `cooler_inc`
   - mobo: `socket`, `mem`, `form` (ATX/Micro-ATX/Mini-ITX), `m2`, `pcie`, `wifi`
   - ram: `mem` (DDR4/DDR5), `size` (GB), `shortage` (true — see below)
@@ -101,6 +107,12 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
 - Build panel is **collapsible**: header toggle with animated chevron, and auto-folds on
   scroll-down / reveals on scroll-up (so it never blocks the catalog on mobile).
 - Presets modal, toast, PWA install button (`beforeinstallprompt`).
+- **Mobile UI:** below 900px the 3-column layout stacks to one column and a **fixed bottom
+  summary bar** (`#mobileBar`, hidden on desktop) keeps the live total + build health in
+  view; tapping it scrolls to the full summary. Detail page + spec table stack at ≤860/≤620.
+  NOTE: the Claude preview can't emulate a true narrow *paint* width (it paints ~1049px even
+  when `matchMedia`/`clientWidth` report 390) — verify mobile via computed styles / matchMedia
+  and on a real device, not the preview screenshot.
 
 ## Conventions
 
