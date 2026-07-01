@@ -118,6 +118,15 @@
     </aside>
   </main>
 
+  <!-- Mobile-only sticky summary bar (keeps total + health always in view) -->
+  <button class="mobile-bar" id="mobileBar" type="button" aria-label="Jump to build summary">
+    <span class="mobile-bar-health"><span class="health-dot" id="mobileHealthDot"></span><span id="mobileHealthLabel">Empty</span></span>
+    <span class="mobile-bar-total"><span class="cur">€</span><span id="mobileTotal">0</span></span>
+    <span class="mobile-bar-cta">Summary
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    </span>
+  </button>
+
   <!-- Part detail route (hash: #/part/<id>) -->
   <section class="detail-view" id="partDetail" hidden aria-label="Part details"></section>
 

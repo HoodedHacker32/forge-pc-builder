@@ -26,6 +26,8 @@
     toast: $('toast'), installBtn: $('installBtn'),
     buildPanel: $('buildPanel'), buildToggle: $('buildToggle'), slotCollapse: $('slotCollapse'),
     partDetail: $('partDetail'),
+    mobileBar: $('mobileBar'), mobileTotal: $('mobileTotal'),
+    mobileHealthDot: $('mobileHealthDot'), mobileHealthLabel: $('mobileHealthLabel'),
   };
 
   /* ---- Icons (inline SVG) ---- */
@@ -69,46 +71,89 @@
       <span class="art-fallback">${art}</span>`;
   }
 
-  /* Human-readable spec rows per category for the detail page. */
+  const caseBoardSupport = (form) => ({
+    'ATX': 'ATX, Micro-ATX, Mini-ITX',
+    'Micro-ATX': 'Micro-ATX, Mini-ITX',
+    'Mini-ITX': 'Mini-ITX',
+  }[form] || form);
+  const memList = (m) => Array.isArray(m) ? m.join(' / ') : m;
+
+  /* Full, accurate spec sheet per category for the detail page.
+     Every row reads a real structured field from js/data.js. */
   const SPEC_FIELDS = {
     cpu: [
-      ['Socket', p => p.socket], ['Cores / threads', p => p.spec.split(' · ')[0]],
-      ['Memory support', p => Array.isArray(p.mem) ? p.mem.join(' / ') : p.mem],
-      ['TDP (heat output)', p => p.tdp + ' W'],
-      ['Integrated graphics', p => p.igpu ? 'Yes — runs a display with no GPU' : 'No — needs a graphics card'],
-      ['Cooler included', p => p.cooler_inc ? 'Yes' : 'No — buy a cooler'],
+      ['Cores / threads', p => p.pcore != null ? `${p.cores} cores (${p.pcore}P + ${p.ecore}E) · ${p.threads} threads` : `${p.cores} cores · ${p.threads} threads`],
+      ['Base clock', p => p.base + ' GHz'],
+      ['Max boost clock', p => p.boost + ' GHz'],
+      ['L3 cache', p => p.l3 + ' MB'],
+      ['Architecture', p => p.arch],
+      ['Socket', p => p.socket],
+      ['Memory support', p => `${memList(p.mem)}${p.memSpeed ? ` · up to ${p.memSpeed.toLocaleString('en-IE')} MT/s` : ''}`],
+      ['Integrated graphics', p => p.igpu ? (p.igpuName || 'Yes') : 'None — needs a graphics card'],
+      ['Rated TDP', p => p.tdpRated + ' W'],
+      ['Peak power draw', p => p.tdp + ' W (PPT / Max Turbo)'],
+      ['Boxed cooler', p => p.cooler_inc ? 'Included' : 'Not included — buy one separately'],
     ],
     mobo: [
-      ['Socket', p => p.socket], ['Memory', p => Array.isArray(p.mem) ? p.mem.join(' / ') : p.mem],
-      ['Form factor', p => p.form], ['M.2 slots', p => p.m2], ['PCIe', p => p.pcie + ' (graphics slot)'],
+      ['Socket', p => p.socket],
+      ['Chipset', p => p.chipset],
+      ['Memory type', p => memList(p.mem)],
+      ['RAM slots', p => `${p.ramSlots} × DIMM`],
+      ['Form factor', p => p.form],
+      ['M.2 slots', p => `${p.m2} × M.2 NVMe`],
+      ['Graphics slot', p => `PCIe ${p.pcie} ×16`],
       ['Wi-Fi', p => p.wifi ? 'Built-in' : 'Not included — use Ethernet or add a card'],
     ],
     ram: [
-      ['Type', p => p.mem], ['Capacity', p => fmtCap(p.size)], ['Kit', p => p.spec.split(' · ')[0]],
+      ['Type', p => p.mem],
+      ['Total capacity', p => fmtCap(p.size)],
+      ['Kit', p => p.modules],
+      ['Speed', p => `${p.speed.toLocaleString('en-IE')} MT/s`],
+      ['CAS latency', p => 'CL' + p.cl],
+      ['Voltage', p => p.voltage.toFixed(2) + ' V'],
       ['Shortage note', p => p.shortage ? '⚠ Priced up by the 2026 DRAM shortage' : '—'],
     ],
     gpu: [
-      ['TDP (power draw)', p => p.tdp + ' W'], ['Length', p => p.length + ' mm'],
-      ['Min. recommended PSU', p => p.psu_min + ' W'], ['Best for', p => p.spec],
+      ['Brand', p => p.brand],
+      ['Video memory', p => `${p.vram} GB ${p.vramType}`],
+      ['Memory bus', p => p.bus + '-bit'],
+      ['Reference boost clock', p => `${p.boost.toLocaleString('en-IE')} MHz`],
+      ['Board power (TDP)', p => p.tdp + ' W'],
+      ['Card length', p => p.length + ' mm'],
+      ['Min. recommended PSU', p => p.psu_min + ' W'],
+      ['Power connector', p => p.power_conn],
     ],
     storage: [
-      ['Interface', p => p.iface === 'M.2' ? 'M.2 NVMe (needs an M.2 slot)' : 'SATA'],
-      ['Capacity', p => fmtCap(p.size)], ['Notes', p => p.spec],
+      ['Type', p => p.tech],
+      ['Interface', p => p.pcie],
+      ['Form factor', p => p.form],
+      ['Capacity', p => fmtCap(p.size)],
+      ['Sequential read', p => `~${p.read.toLocaleString('en-IE')} MB/s`],
+      ['Sequential write', p => `~${p.write.toLocaleString('en-IE')} MB/s`],
     ],
     psu: [
-      ['Wattage', p => p.watt + ' W'], ['Efficiency', p => '80+ ' + p.rating],
-      ['Form factor', p => p.form], ['Notes', p => p.spec],
+      ['Wattage', p => p.watt + ' W'],
+      ['Efficiency', p => '80 PLUS ' + p.rating],
+      ['Form factor', p => p.form],
+      ['Modularity', p => p.modular],
+      ['Fan', p => p.fan],
+      ['ATX 3.0', p => p.atx3 ? 'Yes' : 'No'],
+      ['GPU power connector', p => p.power_conn],
     ],
     case: [
-      ['Form factor', p => p.form + ' (fits this size board & smaller)'],
-      ['Max GPU length', p => p.gpu_max + ' mm'], ['Max air cooler height', p => p.cooler_max + ' mm'],
+      ['Form factor', p => p.form],
+      ['Motherboard support', p => caseBoardSupport(p.form)],
+      ['Max GPU length', p => p.gpu_max + ' mm'],
+      ['Max air-cooler height', p => p.cooler_max + ' mm'],
+      ['Radiator support', p => p.radiator],
       ['Power supply', p => p.psu_form + ' form factor'],
     ],
     cooler: [
       ['Type', p => p.type === 'aio' ? 'Liquid AIO (radiator)' : 'Air tower'],
       ['Size', p => p.type === 'aio' ? p.rad + ' mm radiator' : p.height + ' mm tall'],
-      ['Handles up to', p => p.tdp_max + ' W CPUs'],
-      ['Sockets', p => p.sockets.join(', ')],
+      ['Fans', p => p.fans],
+      ['Cooling capacity', p => `Up to ~${p.tdp_max} W CPUs`],
+      ['Socket support', p => p.sockets.join(', ')],
     ],
   };
 
@@ -326,6 +371,11 @@
     const [cls, label] = map[health];
     el.healthPill.className = 'health-pill ' + cls;
     el.healthLabel.textContent = label;
+
+    // Mobile sticky bar mirrors the total + health.
+    el.mobileTotal.textContent = fmtPrice(total);
+    el.mobileHealthLabel.textContent = label;
+    el.mobileBar.className = 'mobile-bar ' + cls;
   }
 
   function renderAll() {
@@ -573,6 +623,9 @@
 
   el.resetBtn.addEventListener('click', reset);
   el.shareBtn.addEventListener('click', shareBuild);
+  el.mobileBar.addEventListener('click', () => {
+    document.querySelector('.summary-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   el.presetBtn.addEventListener('click', openPresets);
   el.presetClose.addEventListener('click', closePresets);
   el.presetModal.addEventListener('click', (e) => { if (e.target === el.presetModal) closePresets(); });
