@@ -18,6 +18,8 @@
     emptyState: $('emptyState'), catalogTitle: $('catalogTitle'), catalogSub: $('catalogSub'),
     search: $('searchInput'), compatBanner: $('compatBanner'),
     totalPrice: $('totalPrice'), partCount: $('partCount'), wattReadout: $('wattReadout'),
+    perfEstimate: $('perfEstimate'), perfTier: $('perfTier'), perfFps: $('perfFps'),
+    perfRes: $('perfRes'), perfBarFill: $('perfBarFill'), perfNote: $('perfNote'),
     reportList: $('reportList'), psuMeter: $('psuMeter'), psuBarFill: $('psuBarFill'),
     psuLoadText: $('psuLoadText'), psuHint: $('psuHint'),
     healthPill: $('healthPill'), healthLabel: $('healthLabel'), slotProgress: $('slotProgress'),
@@ -62,10 +64,104 @@
     return null;
   }
 
-  /* Card thumbnail / detail hero: bespoke SVG line-art, consistent across every part. */
+  /* Card thumbnail / detail hero: real product photo when we have one (owner-supplied
+     image set), else the bespoke SVG line-art. The <img> falls back to the line-art if
+     the photo fails to load, and flips the media plate back to the dark blueprint look. */
   function partThumb(cat, p) {
-    return partArt(cat, p);
+    const art = partArt(cat, p);
+    if (!p.img) return art;
+    return `<img class="part-photo" src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"
+      onerror="var m=this.closest('.has-photo'); if(m){m.classList.remove('has-photo');m.classList.add('photo-failed');} this.remove();" />
+      <span class="art-fallback">${art}</span>`;
   }
+
+  /* ---------- Buyer guidance: tier + what a part is good for ------------ */
+  const PERF_TIERS = [
+    [88, 'Flagship'], [66, 'High-end'], [46, 'Upper mid-range'], [30, 'Mid-range'], [0, 'Entry'],
+  ];
+  const tierFor = (perf) => (PERF_TIERS.find(([n]) => perf >= n) || [0, 'Entry'])[1];
+
+  /* Returns { tier, summary, bestFor[] } — a short recommendation shown on the detail page.
+     Heuristics over the real spec fields, so it scales without hand-writing 88 blurbs. */
+  function partAdvice(cat, p) {
+    const a = { tier: '', summary: '', bestFor: [] };
+    if (cat === 'gpu') {
+      a.tier = tierFor(p.perf);
+      if (p.perf >= 72) { a.summary = `A top-tier card for maxed-out 4K gaming and heavy GPU work. Overkill for 1080p — pair it with a fast CPU and a high-refresh or 4K monitor to feel the benefit.`; a.bestFor = ['4K ultra gaming', 'Ray tracing', 'Content creation', 'VR']; }
+      else if (p.perf >= 48) { a.summary = `A 1440p powerhouse that also handles entry 4K. The sweet spot for high-refresh gaming without paying the flagship tax.`; a.bestFor = ['1440p high-refresh', 'Entry 4K', 'Streaming', 'VR']; }
+      else if (p.perf >= 30) { a.summary = `Great for high-refresh 1080p and comfortable 1440p in most titles. The best value bracket for mainstream gamers.`; a.bestFor = ['1080p high-refresh', '1440p (tuned)', 'Esports']; }
+      else { a.summary = `An entry card aimed at 1080p and esports. Turn on upscaling for heavier games; ideal for a first build or a budget rig.`; a.bestFor = ['1080p gaming', 'Esports', 'HTPC']; }
+      if (p.vram >= 16) a.bestFor.push('VRAM-hungry games');
+    } else if (cat === 'cpu') {
+      const gamer = (p.l3 || 0) >= 96;                 // 3D V-Cache
+      const workstation = (p.cores || 0) >= 12;
+      a.tier = tierFor(p.perf);
+      if (gamer) a.summary = `3D V-Cache makes this one of the fastest gaming CPUs you can buy — it shines at high frame-rates and CPU-bound titles (sims, strategy, MMOs).`;
+      else if (workstation) a.summary = `Lots of cores for rendering, compiling and multitasking, while still gaming strongly. A do-it-all chip.`;
+      else a.summary = `A well-balanced mainstream CPU — plenty for gaming paired with a mid-to-high GPU, and smooth for everyday multitasking.`;
+      a.bestFor = gamer ? ['Competitive gaming', 'High-FPS', 'Sim/strategy'] : workstation ? ['Content creation', 'Streaming', 'Multitasking', 'Gaming'] : ['Gaming', 'Everyday', 'Value builds'];
+      if (p.igpu) a.bestFor.push('Runs without a GPU');
+    } else if (cat === 'ram') {
+      const g = p.size;
+      a.tier = g >= 64 ? 'Creator' : g >= 32 ? 'Sweet spot' : 'Entry';
+      if (g <= 16) a.summary = `16GB is the practical minimum for modern gaming. Fine for most titles today, but tabs + a game can fill it — 32GB is the safer buy if the budget allows.`;
+      else if (g <= 32) a.summary = `32GB is the current sweet spot: comfortable for gaming plus browsers, Discord and light creative work with room to spare.`;
+      else a.summary = `A large kit for creators and heavy multitaskers — video editing, VMs, big project files. More than gaming needs alone.`;
+      a.bestFor = g <= 16 ? ['1080p gaming', 'Budget builds'] : g <= 32 ? ['Gaming', 'Streaming', 'Everyday'] : ['Video editing', 'VMs / workstations', '3D & CAD'];
+      a.bestFor.push(`${p.speed}MT/s`);
+    } else if (cat === 'storage') {
+      const tb = p.size / 1000;
+      a.tier = p.pcie && p.pcie.includes('5.0') ? 'Fastest' : p.iface === 'M.2' ? 'Fast NVMe' : p.tech && p.tech.includes('Hard') ? 'Bulk' : 'Value';
+      if (p.tech && p.tech.includes('Hard')) a.summary = `A mechanical drive for cheap bulk capacity — media libraries, backups and archives. Put Windows and games on an SSD, use this for everything else.`;
+      else if (p.iface !== 'M.2') a.summary = `A 2.5" SATA SSD — hugely faster than a hard drive and universally compatible. A solid budget boot drive or a roomy games library.`;
+      else a.summary = `An NVMe SSD${p.pcie && p.pcie.includes('5.0') ? ' on the fastest PCIe 5.0 tier' : ''} — near-instant boots, fast game loads and quick file transfers. The right home for Windows and your games.`;
+      a.bestFor = [`${tb >= 1 ? tb + 'TB' : p.size + 'GB'} capacity`];
+      a.bestFor.push(p.tech && p.tech.includes('Hard') ? 'Backups & archives' : 'OS & games');
+    } else if (cat === 'psu') {
+      a.tier = p.watt >= 1000 ? 'Big-GPU ready' : p.watt >= 750 ? 'High-end ready' : 'Mainstream';
+      a.summary = `${p.watt}W, ${p.rating}-rated and ${(p.modular || '').toLowerCase()}. ${p.watt >= 1000 ? 'Enough headroom for the thirstiest GPUs (RTX 5090/4090 class).' : p.watt >= 750 ? 'Comfortable for a high-end single-GPU build.' : 'Ideal for mainstream and efficient builds.'} ${p.atx3 ? 'ATX 3.x with a native 12V-2×6 connector.' : ''}`;
+      a.bestFor = [`${p.watt}W`, p.form === 'SFX' ? 'Small-form-factor' : 'ATX towers', `${p.rating} efficiency`];
+    } else if (cat === 'case') {
+      a.tier = p.form;
+      a.summary = `A ${p.form} case fitting GPUs up to ${p.gpu_max}mm and ${p.psu_form} power supplies. ${p.form === 'Mini-ITX' ? 'Tiny footprint — plan cooling and cable room carefully.' : 'Roomy enough for big air coolers or a front radiator.'}`;
+      a.bestFor = [`${p.form} builds`, `GPUs ≤ ${p.gpu_max}mm`];
+      if (p.radiator) a.bestFor.push('AIO-friendly');
+    } else if (cat === 'cooler') {
+      a.tier = p.type === 'aio' ? `${p.rad}mm AIO` : p.height <= 70 ? 'Low-profile' : 'Air tower';
+      a.summary = p.type === 'aio'
+        ? `A ${p.rad}mm all-in-one liquid cooler — strong, quiet cooling for hot high-end CPUs, rated to ~${p.tdp_max}W. Check your case supports a ${p.rad}mm radiator.`
+        : p.height <= 70 ? `A low-profile air cooler for small-form-factor builds where tall towers won't fit (≤ ${p.height}mm). Best with efficient CPUs.`
+        : `A dual-tower style air cooler rated to ~${p.tdp_max}W — quiet, reliable and no pump to fail. Make sure it clears your RAM and case (${p.height}mm tall).`;
+      a.bestFor = [`≤ ${p.tdp_max}W CPUs`, p.type === 'aio' ? 'High-end / hot chips' : p.height <= 70 ? 'SFF builds' : 'Quiet air cooling'];
+    } else if (cat === 'mobo') {
+      a.tier = p.chipset;
+      a.summary = `A ${p.form} ${p.socket} board (${p.chipset}) with ${p.ramSlots} DIMM slots and ${p.m2} M.2 slot${p.m2 === 1 ? '' : 's'}. ${p.wifi ? 'Wi-Fi built in.' : 'No onboard Wi-Fi.'} ${p.pcie === '5.0' ? 'PCIe 5.0 for the newest GPUs & SSDs.' : ''}`;
+      a.bestFor = [`${p.socket} CPUs`, `${p.form}`, p.wifi ? 'Wi-Fi included' : 'Wired networking'];
+    }
+    return a;
+  }
+
+  /* Rough gaming performance estimate for the whole build. GPU dominates; a much
+     weaker CPU caps the achievable score. Returns null until there's something to score. */
+  function estimatePerformance(build) {
+    const { cpu, gpu } = build;
+    if (!gpu && !cpu) return null;
+    const gPerf = gpu ? gpu.perf : (cpu && cpu.igpu ? 9 : 0);
+    const cPerf = cpu ? cpu.perf : 60;                 // assume a decent CPU if none picked yet
+    const cpuCap = 45 + cPerf * 0.65;                  // weak CPU limits a strong GPU
+    const score = Math.max(0, Math.round(Math.min(gPerf, cpuCap)));
+
+    let res, mult, note;
+    if (!gpu) { res = '720–1080p'; mult = 1.6; note = 'Integrated graphics — esports & lighter titles only.'; }
+    else if (gPerf >= 72) { res = '4K Ultra'; mult = 1.2; note = 'Maxed-out 4K with room for ray tracing.'; }
+    else if (gPerf >= 48) { res = '1440p Ultra'; mult = 1.85; note = 'High-refresh 1440p; solid entry 4K.'; }
+    else if (gPerf >= 30) { res = '1080p High'; mult = 3.0; note = 'High-refresh 1080p; 1440p with a few tweaks.'; }
+    else { res = '1080p'; mult = 3.4; note = 'Great esports frames; use upscaling in AAA games.'; }
+    const fps = Math.max(30, Math.round(gPerf * mult));
+    return { score, tier: tierFor(score), res, fps, note, capped: gpu && cpuCap < gPerf };
+  }
+
+  const legacyTag = (p) => p && p.legacy ? `<span class="legacy-tag" title="Previous-generation part — still sold, availability thinning">Prev-gen</span>` : '';
 
   const caseBoardSupport = (form) => ({
     'ATX': 'ATX, Micro-ATX, Mini-ITX',
@@ -272,7 +368,7 @@
           : '';
       const shortageTag = p.shortage ? `<span class="shortage-tag" title="Affected by the 2026 DRAM shortage">⚠ Shortage</span>` : '';
       return `<article class="part-card ${selected ? 'selected' : ''} flag-${flag}" data-part="${p.id}" role="button" tabindex="0" aria-label="View ${p.name} details">
-        <div class="part-media">${partThumb(activeCat, p)}${shortageTag}</div>
+        <div class="part-media ${p.img ? 'has-photo' : ''}">${partThumb(activeCat, p)}${shortageTag}${legacyTag(p)}</div>
         <div class="part-top">
           <h3>${p.name}</h3>
           <span class="part-price">${p.price === 0 ? 'Free' : '€' + fmtPrice(p.price)}</span>
@@ -322,6 +418,20 @@
     const draw = estimateDraw(build);
     el.wattReadout.textContent = `${draw} W est. draw`;
 
+    // Fancy little performance estimate (needs a CPU or GPU to say anything)
+    const perf = estimatePerformance(build);
+    if (perf) {
+      el.perfEstimate.hidden = false;
+      el.perfTier.textContent = perf.tier;
+      el.perfFps.textContent = '≈ ' + perf.fps;
+      el.perfRes.textContent = perf.res;
+      el.perfBarFill.style.width = Math.min(100, perf.score) + '%';
+      el.perfBarFill.className = perf.score >= 66 ? 'high' : perf.score >= 40 ? 'mid' : 'low';
+      el.perfNote.textContent = perf.capped ? perf.note + ' CPU may hold the GPU back a little.' : perf.note;
+    } else {
+      el.perfEstimate.hidden = true;
+    }
+
     // Report
     const issues = analyse(build);
     const missing = missingEssentials(build, CATEGORIES);
@@ -340,6 +450,10 @@
 
       if (missing.length) {
         html += `<li class="report-item warn">${svg('warn', 15)}<span>Still need: ${missing.map(m => m.name).join(', ')}.</span></li>`;
+      }
+      const legacyParts = parts.filter(p => p.legacy);
+      if (legacyParts.length) {
+        html += `<li class="report-item info">${svg('info', 15)}<span>Previous-gen: ${legacyParts.map(p => p.name).join(', ')} — still fine, just check availability & price.</span></li>`;
       }
       if (!issues.length && !missing.length) {
         html = `<li class="report-item ok">${svg('check', 15)}<span>Everything checks out — this build is ready to order.</span></li>` + html;
@@ -417,6 +531,21 @@
       return `<div class="spec-row"><dt>${label}</dt><dd>${val}</dd></div>`;
     }).join('');
 
+    const advice = partAdvice(cat, part);
+    const adviceHtml = advice.summary ? `
+      <div class="advice">
+        <div class="advice-head">
+          <h3 class="detail-h3">Our take</h3>
+          ${advice.tier ? `<span class="advice-tier">${advice.tier}</span>` : ''}
+        </div>
+        <p class="advice-summary">${advice.summary}</p>
+        ${advice.bestFor.length ? `<div class="advice-tags">${advice.bestFor.map(t => `<span class="advice-tag">${t}</span>`).join('')}</div>` : ''}
+      </div>` : '';
+    const availHtml = part.legacy ? `
+      <div class="avail-warn">${svg('warn', 16)}
+        <span><strong>Previous-generation part.</strong> Still sold, but stock is thinning and prices can swing — current-gen equivalents may offer better value or efficiency. Worth a quick price check before buying.</span>
+      </div>` : '';
+
     el.partDetail.innerHTML = `
       <div class="detail-inner">
         <div class="detail-bar">
@@ -427,8 +556,9 @@
           <span class="detail-cat">${category.name}</span>
         </div>
         <div class="detail-grid">
-          <div class="detail-media">
+          <div class="detail-media ${part.img ? 'has-photo' : ''}">
             ${part.shortage ? '<span class="shortage-tag">⚠ Shortage</span>' : ''}
+            ${legacyTag(part)}
             ${partThumb(cat, part)}
           </div>
           <div class="detail-info">
@@ -440,6 +570,8 @@
                 ${selected ? 'Remove from build' : 'Add to build'}
               </button>
             </div>
+            ${availHtml}
+            ${adviceHtml}
             <h3 class="detail-h3">Specifications</h3>
             <dl class="spec-list">${rows}</dl>
             <h3 class="detail-h3">Compatibility with your build</h3>
