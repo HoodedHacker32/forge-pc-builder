@@ -1,13 +1,13 @@
 /* Forge · Service worker — offline-first caching */
-const CACHE = 'forge-v6';
+const CACHE = 'forge-v8';
 const ASSETS = [
   './',
   './index.html',
-  './css/styles.css?v=6',
-  './js/data.js?v=6',
-  './js/art.js?v=6',
-  './js/compat.js?v=6',
-  './js/app.js?v=6',
+  './css/styles.css?v=8',
+  './js/data.js?v=8',
+  './js/art.js?v=8',
+  './js/compat.js?v=8',
+  './js/app.js?v=8',
   './manifest.webmanifest',
   './icons/icon.svg',
 ];
@@ -24,8 +24,27 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// The HTML document is never versioned by a `?v=` query string, so it must never be
+// served cache-first — a stale cached index.html paired with a fresh app.js is exactly
+// the kind of drift that breaks the whole page (missing elements the new JS expects).
+// Navigation requests always go network-first; only the hashed/versioned static assets
+// are safe to serve cache-first.
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
+
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put('./index.html', copy)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match('./index.html').then((cached) => cached || caches.match('./')))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
