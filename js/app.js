@@ -62,14 +62,9 @@
     return null;
   }
 
-  /* Card thumbnail / detail hero: real product photo if present, else SVG art.
-     The <img> falls back to the SVG illustration if the photo fails to load. */
+  /* Card thumbnail / detail hero: bespoke SVG line-art, consistent across every part. */
   function partThumb(cat, p) {
-    const art = partArt(cat, p);
-    if (!p.img) return art;
-    return `<img class="part-photo" src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"
-      onerror="this.parentNode.classList.add('photo-failed');this.remove();" />
-      <span class="art-fallback">${art}</span>`;
+    return partArt(cat, p);
   }
 
   const caseBoardSupport = (form) => ({
