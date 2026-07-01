@@ -23,7 +23,7 @@
     healthPill: $('healthPill'), healthLabel: $('healthLabel'), slotProgress: $('slotProgress'),
     presetBtn: $('presetBtn'), resetBtn: $('resetBtn'), shareBtn: $('shareBtn'),
     presetModal: $('presetModal'), presetGrid: $('presetGrid'), presetClose: $('presetClose'),
-    toast: $('toast'), installBtn: $('installBtn'),
+    toast: $('toast'),
     buildPanel: $('buildPanel'), buildToggle: $('buildToggle'), slotCollapse: $('slotCollapse'),
     partDetail: $('partDetail'),
     mobileNav: $('mobileNav'), mnavTotal: $('mnavTotal'), mnavBadge: $('mnavBadge'),
@@ -665,22 +665,6 @@
     const b = e.target.closest('[data-mtab]');
     if (b) setMobileTab(b.dataset.mtab);
   });
-
-  /* ---- PWA install prompt ---- */
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (el.installBtn) el.installBtn.hidden = false;
-  });
-  on(el.installBtn, 'click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    el.installBtn.hidden = true;
-  });
-  window.addEventListener('appinstalled', () => { if (el.installBtn) el.installBtn.hidden = true; toast('Forge installed!'); });
 
   /* ---- Boot ---- */
   try {
