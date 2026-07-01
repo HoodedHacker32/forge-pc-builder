@@ -52,6 +52,7 @@ js/app.js                  # UI controller / state / events / persistence
 manifest.webmanifest       # PWA manifest
 sw.js                      # service worker (offline-first cache; bump CACHE on asset change)
 icons/icon.svg             # red hexagon app icon (+ icon-192.png, icon-512.png generated)
+img/hex-tile.svg           # seamless tileable hexagon-mesh background (owner-supplied, fill #141414)
 .claude/launch.json        # preview server config
 CLAUDE.md                  # this file
 ```
@@ -174,6 +175,17 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   containers, which was squashing card rows to fit instead of letting them overflow/scroll);
   the toast notification overlapped and hid the mobile bottom tab bar (repositioned above it
   on mobile). Bumped asset version to `v=8` for all of this.
+- **2026-07-01 — desktop imagery + background overhaul (`v=9`):** owner reported desktop
+  looked "broken" — root cause was the 5 mismatched real photos among 65 line-art cards (see
+  open task 3). Removed all photos; `partThumb()` now always renders the bespoke line-art, so
+  the catalog is visually consistent everywhere. Polished `.part-media` (taller, internal
+  padding, drop-shadow on the art, a faint red seam — a vertical divider in the mobile row
+  layout). Replaced the tiny 28×49 stroke-hex data-URI background (owner: "doesn't work") with
+  an owner-supplied **seamless tileable hexagon mesh** at `img/hex-tile.svg`, tiled via
+  `.aurora::after { background: url(../img/hex-tile.svg) repeat; background-size:300px }` with a
+  radial mask so it fades toward the bottom. Also fixed a latent version drift: `index.html`
+  had been at `?v=6` while `sw.js` pre-cached `?v=8` (the pre-cache silently never matched) —
+  everything is now unified at `?v=9`, and `hex-tile.svg` was added to the SW `ASSETS` list.
 
 ## Repo & deployment
 
@@ -189,23 +201,18 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
 2. [DONE] **Part detail pages** — hash route `#/part/<id>`, full specs, live compatibility,
    price, Add/Remove, keyboard + Escape support. Implemented in `app.js` (renderDetail/
    router/openDetail). Cards now open the detail; a quick-add button adds without leaving.
-3. [INFRA DONE, IMAGES PARTIAL] **Real product images.** `partThumb()` renders `p.img`
-   (a real photo) with automatic `onerror` fallback to the SVG `partArt`. **5 of 70 parts
-   have real photos** so far (RTX 4090, RX 7900 XTX, Arc B580, i9-14900K, Lian Li O11
-   Dynamic) — all the others fall back to the SVG illustration. Reason it's only 5: this
-   sandbox has **no outbound network** (curl
-   returns 000) so images can't be downloaded/verified here, and free, correctly-matched
-   per-SKU product photos are scarce (Wikimedia mostly has die-shots or video screenshots
-   for the rest). **Working pattern to add more:** set `img` on a part in `js/data.js` to
-   `https://commons.wikimedia.org/wiki/Special:FilePath/<Exact_File_Name>.jpg?width=600`
-   (the officially-supported hotlink endpoint — 301-redirects to the canonical thumb; the
-   user's browser loads it client-side, so it works on Pages even though the sandbox can't).
-   Verify a candidate file exists by WebFetching the Special:FilePath URL and checking it
-   redirects to a real `upload.wikimedia.org/...thumb...` URL. The `onerror` fallback keeps
-   the UI clean for any that fail, so it is safe to add URLs you can't render here. Avoid
-   die-shots / video-screenshot files — prefer filenames that clearly name the retail card
-   (e.g. `Asus_Strix_RTX_4090.jpg`). For non-GPU parts, retailer/brand CDN URLs also work
-   if hotlink-friendly + https; the user can paste preferred URLs to wire in directly.
+3. [DONE — DECIDED AGAINST PHOTOS] **Part imagery = unified bespoke line-art, no photos.**
+   The real-photo experiment (5 of 70 parts had Wikimedia photos: RTX 4090, RX 7900 XTX,
+   Arc B580, i9-14900K, Lian Li O11) was **removed 2026-07-01** at the owner's direction.
+   Reason: a handful of mismatched marketing shots (branding, backgrounds, odd framing — the
+   Lian Li one was a der8auer-edition desk photo with text) sitting among 65 clean SVG cards
+   read as broken/janky on desktop, and the sandbox has no outbound network to source/verify
+   consistent per-SKU photos. Decision: **`partThumb()` now always returns `partArt()`** — the
+   bespoke white-line/red-accent line-art (`js/art.js`), consistent for every part, fully
+   on-brand ("not AI slop"), zero network dependency. The `img` field, the `<img>`/`onerror`
+   fallback, and the `.part-photo`/`.art-fallback`/`.photo-failed` CSS were all deleted.
+   **Do not reintroduce mixed photos** unless the owner supplies a *complete, consistent*
+   clean-cutout set for all 70 parts. To upgrade imagery, improve `js/art.js` instead.
 4. [DONE] Mobile-first refinements (detail layout, touch targets, breakpoints).
 5. [DONE] GitHub repo + Pages.
 6. [BLOCKED] Email the owner the full parts list. The **Gmail connector is not connected**

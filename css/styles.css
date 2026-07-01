@@ -68,8 +68,13 @@ body {
     radial-gradient(700px 500px at -5% 100%, rgba(255, 37, 50, 0.06), transparent 55%),
     var(--bg);
 }
-.aurora::after { content: ''; position: absolute; inset: -2px; opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.045'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5z'/%3E%3Cpath d='M28 24.06l-3-1.73v-3.46l3-1.73 3 1.73v3.46zM0 24.06l-3-1.73v-3.46l3-1.73 3 1.73v3.46z'/%3E%3C/g%3E%3C/svg%3E");
+/* Tileable hexagon mesh (external SVG, fill #141414) sits on the near-black base.
+   Kept subtle so the red glows and content stay dominant. */
+.aurora::after { content: ''; position: absolute; inset: 0; opacity: 0.85;
+  background-image: url("../img/hex-tile.svg");
+  background-repeat: repeat; background-size: 300px 300px; background-position: center top;
+  -webkit-mask-image: radial-gradient(140% 120% at 50% 0%, #000 55%, transparent 100%);
+          mask-image: radial-gradient(140% 120% at 50% 0%, #000 55%, transparent 100%);
 }
 .blob { display: none; }
 
@@ -221,15 +226,21 @@ body {
 .part-card.flag-error { opacity: 0.66; }
 
 .part-media {
-  position: relative; height: 116px; margin-bottom: 4px;
+  position: relative; height: 128px; margin-bottom: 4px; padding: 10px 14px;
   background:
-    radial-gradient(120% 120% at 50% 0%, rgba(255, 37, 50, 0.10), transparent 70%),
-    rgba(255, 255, 255, 0.02);
+    radial-gradient(130% 130% at 50% -20%, rgba(255, 37, 50, 0.12), transparent 68%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
   border-bottom: 1px solid var(--stroke);
   display: grid; place-items: center; overflow: hidden;
 }
-.part-media .part-art { width: 100%; height: 100%; }
-.part-card.selected .part-media { background: radial-gradient(120% 120% at 50% 0%, rgba(255, 37, 50, 0.2), transparent 70%); }
+/* faint red hairline seam under the illustration, echoing the panel accents */
+.part-media::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red-glow), transparent); opacity: 0.5; }
+.part-media .part-art { width: 100%; height: 100%; filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45)); }
+.part-card:hover .part-media { background:
+    radial-gradient(130% 130% at 50% -20%, rgba(255, 37, 50, 0.18), transparent 68%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)); }
+.part-card.selected .part-media { background: radial-gradient(130% 130% at 50% -20%, rgba(255, 37, 50, 0.24), transparent 68%); }
 .shortage-tag {
   position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
   color: #fff; background: var(--warn); padding: 3px 7px; clip-path: var(--cut); text-transform: uppercase;
@@ -249,11 +260,6 @@ body {
   padding: 6px 11px; cursor: pointer; transition: all 0.14s; clip-path: var(--cut);
 }
 .quick-add.added { background: rgba(70, 211, 154, 0.14); border-color: rgba(70, 211, 154, 0.5); color: var(--ok); }
-
-/* Real product photo with SVG-art fallback */
-.part-photo { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
-.art-fallback { display: none; width: 100%; height: 100%; }
-.part-media.photo-failed .art-fallback { display: grid; place-items: center; }
 
 /* ---- Part detail page (hash route) ---- */
 .detail-view {
@@ -283,8 +289,7 @@ body.detail-open { overflow: hidden; }
     rgba(255, 255, 255, 0.02);
   display: grid; place-items: center; overflow: hidden; position: sticky; top: 70px;
 }
-.detail-media .part-art, .detail-media .art-fallback { width: 86%; height: 86%; }
-.detail-media .part-photo { width: 100%; height: 100%; object-fit: contain; padding: 18px; }
+.detail-media .part-art { width: 86%; height: 86%; filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5)); }
 .detail-media .shortage-tag { z-index: 2; }
 
 .detail-info h2 { font-family: var(--display); font-size: clamp(22px, 4vw, 30px); letter-spacing: 0.01em; line-height: 1.15; }
@@ -453,9 +458,12 @@ body.detail-open { overflow: hidden; }
     padding: 0; align-items: stretch;
   }
   .part-media {
-    grid-area: media; height: 100%; min-height: 108px; margin: 0;
+    grid-area: media; height: 100%; min-height: 108px; margin: 0; padding: 8px 6px;
     border-bottom: none; border-right: 1px solid var(--stroke);
   }
+  /* the hairline is a vertical divider in the row layout — draw it on the right edge */
+  .part-media::after { top: 0; left: auto; right: 0; bottom: 0; width: 1px; height: auto;
+    background: linear-gradient(180deg, transparent, var(--red-glow), transparent); }
   .part-top  { grid-area: top;  padding: 12px 14px 0; }
   .part-spec { grid-area: spec; padding: 4px 14px; font-size: 13px; }
   .part-foot { grid-area: foot; padding: 0 14px 12px; }

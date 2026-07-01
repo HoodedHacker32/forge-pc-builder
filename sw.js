@@ -1,13 +1,14 @@
 /* Forge · Service worker — offline-first caching */
-const CACHE = 'forge-v8';
+const CACHE = 'forge-v9';
 const ASSETS = [
   './',
   './index.html',
-  './css/styles.css?v=8',
-  './js/data.js?v=8',
-  './js/art.js?v=8',
-  './js/compat.js?v=8',
-  './js/app.js?v=8',
+  './css/styles.css?v=9',
+  './js/data.js?v=9',
+  './js/art.js?v=9',
+  './js/compat.js?v=9',
+  './js/app.js?v=9',
+  './img/hex-tile.svg',
   './manifest.webmanifest',
   './icons/icon.svg',
 ];
