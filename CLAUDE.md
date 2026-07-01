@@ -182,11 +182,24 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   the catalog is visually consistent everywhere. Polished `.part-media` (taller, internal
   padding, drop-shadow on the art, a faint red seam — a vertical divider in the mobile row
   layout). Replaced the tiny 28×49 stroke-hex data-URI background (owner: "doesn't work") with
-  an owner-supplied **seamless tileable hexagon mesh** at `img/hex-tile.svg`, tiled via
-  `.aurora::after { background: url(../img/hex-tile.svg) repeat; background-size:300px }` with a
-  radial mask so it fades toward the bottom. Also fixed a latent version drift: `index.html`
-  had been at `?v=6` while `sw.js` pre-cached `?v=8` (the pre-cache silently never matched) —
-  everything is now unified at `?v=9`, and `hex-tile.svg` was added to the SW `ASSETS` list.
+  an owner-supplied tileable hexagon mesh at `img/hex-tile.svg`, tiled via `.aurora::after`
+  with a radial mask so it fades toward the bottom. Also fixed a latent version drift:
+  `index.html` had been at `?v=6` while `sw.js` pre-cached `?v=8` (the pre-cache silently never
+  matched) — unified at `?v=9`.
+- **2026-07-01 — hex background had horizontal seams; viewBox was 3.5 vertical periods (`v=11`):**
+  the supplied `img/hex-tile.svg` was seamless left↔right (width 600 = one horizontal period) but
+  **NOT top↔bottom** — its `viewBox="0 0 600 600"` spanned exactly **3.5** vertical hex periods
+  (the true vertical period is `1200/7 ≈ 171.428u`, i.e. 2 rows of the path's `85.714 = 600/7`
+  step), so every tile's top edge couldn't meet its own bottom edge → one seam band per tile,
+  no `background-size` could fix it. Fix: **crop the viewBox to one period** —
+  `viewBox="0 0 600 171.428571"`, `width="600" height="171.428571"` — and tile with
+  **`background-size: 300px auto`** (→ 300×85.71; the 600:171.43 = 3.5:1 aspect MUST be preserved
+  — a square size like `300px 300px` re-breaks it). Diagnosed with an isolated background-only
+  dev server: `debug/hex-bg.html` on **port 4174** (`forge-bg-debug` in `.claude/launch.json`) —
+  renders just `.aurora` + a toggleable tile-boundary grid + a single-tile inspector, so seams
+  are obvious. Handy for any future background work; not linked from the app. NOTE: the SVG is
+  referenced as `hex-tile.svg?v=11` in the CSS because it has no other cache-buster — bump that
+  query if you edit the tile again.
 - **2026-07-01 — PWA / service worker removed entirely (`v=10`):** owner's call — the SW never
   delivered real value and mostly served stale files that annoyed anyone developing on it (it
   was the root of two prior render bugs). Deleted `sw.js` + `manifest.webmanifest`, the SW
