@@ -98,7 +98,6 @@ body {
   background: rgba(255, 255, 255, 0.04); border: 1px solid var(--stroke);
   padding: 9px 15px; cursor: pointer; transition: all 0.16s; clip-path: var(--cut);
 }
-.ghost-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
 .install-btn { background: rgba(255, 37, 50, 0.14); border-color: rgba(255, 37, 50, 0.5); color: var(--red-bright); }
 
 .health-pill {
@@ -144,7 +143,8 @@ body {
 .small { font-size: 12px; }
 
 .slot-collapse {
-  display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.34s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.24s;
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 1fr;
+  transition: grid-template-rows 0.34s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.24s;
   overflow: hidden; opacity: 1;
 }
 .build-panel.collapsed .slot-collapse { grid-template-rows: 0fr; opacity: 0; }
@@ -156,7 +156,6 @@ body {
   cursor: pointer; transition: all 0.16s; position: relative;
   clip-path: var(--cut);
 }
-.slot:hover { border-color: var(--stroke-strong); background: rgba(255, 255, 255, 0.05); }
 .slot.active { border-color: var(--red); background: rgba(255, 37, 50, 0.08); }
 .slot-ico { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0;
   background: rgba(255, 255, 255, 0.05); color: var(--muted);
@@ -178,7 +177,6 @@ body {
   opacity: 0; transition: opacity 0.15s; display: grid; place-items: center;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
-.slot.filled:hover .slot-remove { opacity: 1; }
 
 /* ---- Catalog (center) ---- */
 .catalog-panel { padding: 22px; min-height: 70vh; }
@@ -191,13 +189,15 @@ body {
 .search-wrap:focus-within { border-color: var(--red); }
 
 .cat-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 4px; }
+.cat-tabs.fade-r { -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%); mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%); }
+.cat-tabs.fade-l { -webkit-mask-image: linear-gradient(to left, black calc(100% - 32px), transparent 100%); mask-image: linear-gradient(to left, black calc(100% - 32px), transparent 100%); }
+.cat-tabs.fade-l.fade-r { -webkit-mask-image: linear-gradient(to right, transparent 0, black 32px, black calc(100% - 32px), transparent 100%); mask-image: linear-gradient(to right, transparent 0, black 32px, black calc(100% - 32px), transparent 100%); }
 .cat-tab {
   display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
   font-family: var(--font); font-size: 12.5px; font-weight: 600; color: var(--muted);
   background: rgba(255, 255, 255, 0.03); border: 1px solid var(--stroke);
   padding: 9px 13px; cursor: pointer; transition: all 0.14s; clip-path: var(--cut);
 }
-.cat-tab:hover { color: var(--text); border-color: var(--stroke-strong); }
 .cat-tab.active { color: #fff; background: var(--red); border-color: var(--red); }
 .cat-tab.filled:not(.active) .cat-tab-ico { color: var(--ok); }
 .cat-tab .tab-tick { color: var(--ok); display: inline-flex; }
@@ -217,10 +217,8 @@ body {
   padding: 0 0 14px; display: flex; flex-direction: column; gap: 8px;
   transition: all 0.16s; position: relative; overflow: hidden; clip-path: var(--cut);
 }
-.part-card:hover { transform: translateY(-3px); border-color: var(--red); box-shadow: var(--shadow-glow); }
 .part-card.selected { border-color: var(--red); background: rgba(255, 37, 50, 0.07); box-shadow: var(--shadow-glow); }
 .part-card.flag-error { opacity: 0.66; }
-.part-card.flag-error:hover { opacity: 1; }
 
 .part-media {
   position: relative; height: 116px; margin-bottom: 4px;
@@ -250,7 +248,6 @@ body {
   color: var(--text); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--stroke-strong);
   padding: 6px 11px; cursor: pointer; transition: all 0.14s; clip-path: var(--cut);
 }
-.quick-add:hover { background: var(--red); border-color: var(--red); color: #fff; }
 .quick-add.added { background: rgba(70, 211, 154, 0.14); border-color: rgba(70, 211, 154, 0.5); color: var(--ok); }
 
 /* Real product photo with SVG-art fallback */
@@ -276,7 +273,6 @@ body.detail-open { overflow: hidden; }
   text-transform: uppercase; letter-spacing: 0.05em; color: #fff; cursor: pointer;
   background: var(--red); border: none; padding: 10px 16px; clip-path: var(--cut); box-shadow: 0 8px 20px -10px var(--red-glow);
 }
-.detail-back:hover { background: var(--red-bright); }
 .detail-cat { font-family: var(--display); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
 
 .detail-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(18px, 4vw, 36px); margin-top: 8px; }
@@ -297,7 +293,6 @@ body.detail-open { overflow: hidden; }
 .detail-price { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--red-bright); }
 .detail-add { flex: 1; min-width: 180px; }
 .detail-add.is-remove { background: rgba(255, 255, 255, 0.06); color: var(--text); box-shadow: none; }
-.detail-add.is-remove:hover { background: var(--red); color: #fff; }
 .detail-h3 { font-family: var(--display); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 26px 0 12px; }
 .spec-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--stroke); }
 .spec-row { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 14px; padding: 12px 14px; border-bottom: 1px solid var(--stroke); }
@@ -354,26 +349,26 @@ body.detail-open { overflow: hidden; }
   background: var(--red); border: none; padding: 15px; letter-spacing: 0.06em; text-transform: uppercase;
   clip-path: var(--cut); box-shadow: 0 12px 28px -12px var(--red-glow); transition: all 0.15s;
 }
-.primary-btn:hover { background: var(--red-bright); transform: translateY(-2px); box-shadow: 0 18px 36px -12px var(--red-glow); }
 .primary-btn:active { transform: translateY(0); }
 
 /* ---- Preset modal ---- */
 .modal-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px;
   background: rgba(2, 2, 4, 0.78); backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.2s; }
 .modal-backdrop.open { opacity: 1; }
-.modal { width: min(820px, 100%); background: var(--panel-solid); border: 1px solid var(--stroke-strong); border-top: 3px solid var(--red);
-  padding: 26px; box-shadow: var(--shadow); transform: scale(0.96); transition: transform 0.2s; }
+.modal { width: min(820px, 100%); max-height: calc(100vh - 40px); background: var(--panel-solid); border: 1px solid var(--stroke-strong); border-top: 3px solid var(--red);
+  padding: 26px; box-shadow: var(--shadow); transform: scale(0.96); transition: transform 0.2s;
+  display: flex; flex-direction: column; min-height: 0; }
 .modal-backdrop.open .modal { transform: scale(1); }
-.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+/* Header stays put; only the preset list scrolls — so a short viewport never strands
+   cards below the fold with no way to reach them (there's no scroll on the backdrop itself). */
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-shrink: 0; }
 .modal-head h2 { font-family: var(--display); font-size: 19px; letter-spacing: 0.04em; text-transform: uppercase; }
 .icon-btn { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--stroke); color: var(--text);
   width: 34px; height: 34px; cursor: pointer; font-size: 14px; clip-path: var(--cut); }
-.icon-btn:hover { background: var(--red); border-color: var(--red); }
-.preset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.preset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); grid-auto-rows: max-content; align-content: start; gap: 14px; overflow-y: auto; padding-right: 4px; margin-right: -4px; }
 .preset-card { position: relative; overflow: hidden; text-align: left; cursor: pointer; color: var(--text);
   font-family: var(--font); background: rgba(255, 255, 255, 0.03); border: 1px solid var(--stroke);
   padding: 20px; transition: all 0.18s; clip-path: var(--cut); }
-.preset-card:hover { transform: translateY(-4px); border-color: var(--accent, var(--red)); box-shadow: 0 18px 38px -18px var(--accent, var(--red)); }
 .preset-glow { position: absolute; top: -40px; right: -40px; width: 120px; height: 120px;
   background: var(--accent, var(--red)); filter: blur(50px); opacity: 0.35;
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
@@ -435,9 +430,12 @@ body.detail-open { overflow: hidden; }
   .build-toggle { cursor: default; padding: 4px 4px 14px; }
   .slot-collapse { grid-template-rows: 1fr !important; opacity: 1 !important; overflow: visible; }
   .slot-list { padding: 0; }
-  .slot { padding: 13px; }
+  .slot { padding: 13px 34px 13px 13px; }
   .slot-name { font-size: 14px; }
   .slot-thumb { width: 58px; height: 44px; }
+  /* :hover doesn't exist on touch — the remove button must be always visible, not
+     hover-revealed, or there's no way to remove a part from the Build tab on mobile. */
+  .slot-remove { opacity: 1; top: 50%; transform: translateY(-50%); right: 8px; }
 
   .catalog-panel { padding: 16px; min-height: auto; }
   .catalog-head { flex-direction: column; align-items: stretch; gap: 12px; }
@@ -486,6 +484,9 @@ body.detail-open { overflow: hidden; }
   .spec-row dt { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
   .spec-row dd { font-size: 15px; }
 
+  /* Toast must clear the fixed bottom tab bar, not float on top of and hide it. */
+  .toast { bottom: calc(78px + env(safe-area-inset-bottom)); }
+
   /* Bottom tab bar */
   .mobile-nav {
     display: grid; grid-template-columns: repeat(3, 1fr);
@@ -519,6 +520,24 @@ body.detail-open { overflow: hidden; }
   .topbar-actions .ghost-btn { padding: 9px 10px; }
   .part-card { grid-template-columns: 88px minmax(0, 1fr); }
   .part-media { min-height: 96px; }
+}
+
+/* ---- Hover effects: only for pointers that actually have hover (mouse/trackpad).
+   On touch, `:hover` sticks after a tap until the user taps elsewhere, which reads
+   as a stuck/highlighted button — a classic "why does this look broken" mobile bug. ---- */
+@media (hover: hover) and (pointer: fine) {
+  .ghost-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .slot:hover { border-color: var(--stroke-strong); background: rgba(255, 255, 255, 0.05); }
+  .slot.filled:hover .slot-remove { opacity: 1; }
+  .cat-tab:hover { color: var(--text); border-color: var(--stroke-strong); }
+  .part-card:hover { transform: translateY(-3px); border-color: var(--red); box-shadow: var(--shadow-glow); }
+  .part-card.flag-error:hover { opacity: 1; }
+  .quick-add:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .detail-back:hover { background: var(--red-bright); }
+  .detail-add.is-remove:hover { background: var(--red); color: #fff; }
+  .primary-btn:hover { background: var(--red-bright); transform: translateY(-2px); box-shadow: 0 18px 36px -12px var(--red-glow); }
+  .icon-btn:hover { background: var(--red); border-color: var(--red); }
+  .preset-card:hover { transform: translateY(-4px); border-color: var(--accent, var(--red)); box-shadow: 0 18px 38px -18px var(--accent, var(--red)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

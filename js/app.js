@@ -198,6 +198,16 @@
         ${filled ? `<span class="tab-tick">${svg('check', 12)}</span>` : ''}
       </button>`;
     }).join('');
+    updateCatTabsFade();
+  }
+
+  // Horizontally-scrolling category tabs have no native cue that there's more off-screen —
+  // fade the edge(s) that still have content to scroll to, so it reads as scrollable.
+  function updateCatTabsFade() {
+    const t = el.catTabs;
+    const max = t.scrollWidth - t.clientWidth;
+    t.classList.toggle('fade-l', t.scrollLeft > 4);
+    t.classList.toggle('fade-r', t.scrollLeft < max - 4);
   }
 
   function renderSlots() {
@@ -589,25 +599,32 @@
 
   /* ====================================================== EVENTS ===== */
 
-  el.catTabs.addEventListener('click', (e) => {
+  // A missing element here (e.g. a stale service-worker cache serving an older
+  // index.html alongside a newer app.js) must not throw and abort every listener
+  // below it — that would silently kill the whole app with no visible error.
+  const on = (node, evt, fn) => { if (node) node.addEventListener(evt, fn); };
+
+  on(el.catTabs, 'click', (e) => {
     const btn = e.target.closest('[data-cat]');
     if (btn) selectCategory(btn.dataset.cat);
   });
+  on(el.catTabs, 'scroll', updateCatTabsFade);
+  window.addEventListener('resize', updateCatTabsFade);
 
-  el.slotList.addEventListener('click', (e) => {
+  on(el.slotList, 'click', (e) => {
     const rm = e.target.closest('[data-remove]');
     if (rm) { e.stopPropagation(); removePart(rm.dataset.remove); return; }
     const slot = e.target.closest('[data-cat]');
     if (slot) selectCategory(slot.dataset.cat);
   });
 
-  el.partGrid.addEventListener('click', (e) => {
+  on(el.partGrid, 'click', (e) => {
     const qa = e.target.closest('[data-quickadd]');
     if (qa) { e.stopPropagation(); togglePart(qa.dataset.quickadd); return; }
     const card = e.target.closest('[data-part]');
     if (card) openDetail(card.dataset.part);
   });
-  el.partGrid.addEventListener('keydown', (e) => {
+  on(el.partGrid, 'keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const card = e.target.closest('[data-part]');
     if (card) { e.preventDefault(); openDetail(card.dataset.part); }
@@ -615,28 +632,28 @@
 
   window.addEventListener('hashchange', router);
 
-  el.search.addEventListener('input', (e) => {
+  on(el.search, 'input', (e) => {
     searchTerm = e.target.value.trim();
     renderParts();
   });
 
-  el.resetBtn.addEventListener('click', reset);
-  el.shareBtn.addEventListener('click', shareBuild);
-  el.presetBtn.addEventListener('click', openPresets);
-  el.presetClose.addEventListener('click', closePresets);
-  el.presetModal.addEventListener('click', (e) => { if (e.target === el.presetModal) closePresets(); });
-  el.presetGrid.addEventListener('click', (e) => {
+  on(el.resetBtn, 'click', reset);
+  on(el.shareBtn, 'click', shareBuild);
+  on(el.presetBtn, 'click', openPresets);
+  on(el.presetClose, 'click', closePresets);
+  on(el.presetModal, 'click', (e) => { if (e.target === el.presetModal) closePresets(); });
+  on(el.presetGrid, 'click', (e) => {
     const card = e.target.closest('[data-preset]');
     if (card) applyPreset(PRESETS.find(p => p.id === card.dataset.preset));
   });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (!el.presetModal.hidden) closePresets();
-    else if (!el.partDetail.hidden) location.hash = '';
+    if (el.presetModal && !el.presetModal.hidden) closePresets();
+    else if (el.partDetail && !el.partDetail.hidden) location.hash = '';
   });
 
   /* ---- Build panel manual collapse (desktop convenience only) ---- */
-  el.buildToggle.addEventListener('click', () => {
+  on(el.buildToggle, 'click', () => {
     if (isMobile()) return; // on mobile the build panel is its own tab
     const willCollapse = !el.buildPanel.classList.contains('collapsed');
     el.buildPanel.classList.toggle('collapsed', willCollapse);
@@ -649,7 +666,7 @@
     el.mobileNav.querySelectorAll('[data-mtab]').forEach(b => b.classList.toggle('active', b.dataset.mtab === t));
     window.scrollTo(0, 0);
   }
-  el.mobileNav.addEventListener('click', (e) => {
+  on(el.mobileNav, 'click', (e) => {
     const b = e.target.closest('[data-mtab]');
     if (b) setMobileTab(b.dataset.mtab);
   });
@@ -659,21 +676,25 @@
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    el.installBtn.hidden = false;
+    if (el.installBtn) el.installBtn.hidden = false;
   });
-  el.installBtn.addEventListener('click', async () => {
+  on(el.installBtn, 'click', async () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
     deferredPrompt = null;
     el.installBtn.hidden = true;
   });
-  window.addEventListener('appinstalled', () => { el.installBtn.hidden = true; toast('Forge installed!'); });
+  window.addEventListener('appinstalled', () => { if (el.installBtn) el.installBtn.hidden = true; toast('Forge installed!'); });
 
   /* ---- Boot ---- */
-  load();
-  if (!Object.keys(build).length) activeCat = 'cpu';
-  document.body.dataset.mtab = 'parts'; // default mobile tab (ignored on desktop)
-  renderAll();
-  router(); // handle a deep-link to #/part/<id> on first load
+  try {
+    load();
+    if (!Object.keys(build).length) activeCat = 'cpu';
+    document.body.dataset.mtab = 'parts'; // default mobile tab (ignored on desktop)
+    renderAll();
+    router(); // handle a deep-link to #/part/<id> on first load
+  } catch (err) {
+    console.error('Forge failed to render:', err);
+  }
 })();
