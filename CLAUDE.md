@@ -249,6 +249,29 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   the `legacy` + `perf` + advice conventions. Now 114 parts, only 2 without a photo. The backfill
   was done with a line-based Node script (plain string ops — **avoid `\s` in `node -e` via the
   Bash tool; Git Bash eats the backslash**, matched literal spaces instead). Assets bumped `v=14`.
+- **2026-07-02 — mid-size viewport & misc UI/UX fixes (`v=15`):** owner: "outside of any scale
+  other than desktop or phone, the UI appears strangely." Verified live at
+  1920/1440×700/1280×800/1024/932×430/768/375 and fixed:
+  • **Narrow desktop 1181–1400px** (incl. 1280×800 laptops): the 3-col layout left the catalog
+    ~450px wide → ONE giant stretched card column. New media band slims the rails
+    (`270px / 1fr / 300px`) and drops the card minimum to 200px → 2 columns again.
+  • **Tablet band 901–1180px**: the summary (total €, report, copy button) sits full-width BELOW
+    the entire catalog (~3400px down). Added a **topbar running total** (`#topbarTotal` /
+    `#topTotal`, shown only in this band via CSS); clicking it or the health pill scrolls to the
+    summary (`jumpToSummary` in app.js).
+  • **Short viewports wider than 900px** (landscape phones like 932×430 land in the *tablet*
+    band; small laptop windows ~700px tall): both sticky columns were taller than the viewport,
+    so their bottoms (PSU/Case/Cooler slots; PSU meter + Copy-summary button) stuck permanently
+    below the fold, unreachable. Sticky panels now cap at `max-height: calc(100vh - 104px)` and
+    scroll internally (`.build-panel` became flex-column, `.slot-list` / `.summary-sticky` get
+    `overflow-y: auto`; the mobile band overrides these back to `none`/`visible`).
+  • `estimateDraw({})` returned 70W (the fixed overhead) → summary read "0 parts · 70 W est.
+    draw". Now returns 0 for an empty build.
+  • Perf estimate for a lone iGPU-less CPU (e.g. R5 5600) claimed "Integrated graphics… ≈30
+    FPS". Now returns tier "No graphics", "—" FPS, and an "add a graphics card" note.
+  • Keyboard: Enter/Space on a card's "+ Add" button opened the detail page instead of adding
+    (the grid keydown handler preventDefault'd the native button). Quick-add buttons are now
+    excluded from that handler.
 
 ## Repo & deployment
 

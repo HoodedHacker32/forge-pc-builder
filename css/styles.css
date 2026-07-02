@@ -107,6 +107,16 @@ body {
   padding: 9px 15px; cursor: pointer; transition: all 0.16s; clip-path: var(--cut);
 }
 
+/* Running total in the topbar — only shown in the tablet band (901–1180px),
+   where the summary panel lives below the whole catalog. */
+.topbar-total {
+  display: none; align-items: center; gap: 2px;
+  font-family: var(--display); font-size: 13px; font-weight: 700; color: var(--text);
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--stroke);
+  padding: 8px 14px; cursor: pointer; clip-path: var(--cut);
+}
+.topbar-total .cur { color: var(--red); }
+
 .health-pill {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 12px; font-weight: 700; padding: 8px 14px; letter-spacing: 0.04em; text-transform: uppercase;
@@ -135,7 +145,11 @@ body {
 }
 
 /* ---- Build panel (left) ---- */
-.build-panel { padding: 0; position: sticky; top: 90px; overflow: hidden; }
+/* Sticky columns are capped to the viewport and scroll internally — otherwise on
+   short windows (landscape phones >900px, small laptop windows) the bottom slots
+   stick below the fold and can never be scrolled into view. */
+.build-panel { padding: 0; position: sticky; top: 90px; overflow: hidden;
+  display: flex; flex-direction: column; max-height: calc(100vh - 104px); }
 .build-toggle {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   background: none; border: none; cursor: pointer; color: var(--text);
@@ -155,7 +169,7 @@ body {
   overflow: hidden; opacity: 1;
 }
 .build-panel.collapsed .slot-collapse { grid-template-rows: 0fr; opacity: 0; }
-.slot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; padding: 0 16px 18px; min-height: 0; }
+.slot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; padding: 0 16px 18px; min-height: 0; overflow-y: auto; }
 
 .slot {
   display: flex; align-items: center; gap: 12px; padding: 10px 12px;
@@ -380,7 +394,8 @@ body.detail-open { overflow: hidden; }
 
 /* ---- Summary (right) ---- */
 .summary-panel { padding: 0; background: none; border: none; box-shadow: none; backdrop-filter: none; }
-.summary-sticky { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 14px; }
+.summary-sticky { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 14px;
+  max-height: calc(100vh - 104px); overflow-y: auto; }
 .price-card {
   padding: 22px; border: 1px solid var(--stroke); border-top: 3px solid var(--red);
   background: radial-gradient(360px 180px at 100% 0%, rgba(255, 37, 50, 0.16), transparent 70%), var(--panel-solid);
@@ -461,13 +476,25 @@ body.detail-open { overflow: hidden; }
    ========================================================================= */
 .mobile-nav { display: none; }
 
+/* ---- Narrow desktop (1181–1400px): keep 3 columns, but slim the side rails and
+       card minimum — otherwise the centre gets ~450px and the catalog renders as a
+       single column of giant stretched cards (this hits common 1280×800 laptops). */
+@media (min-width: 1181px) and (max-width: 1400px) {
+  .layout { grid-template-columns: 270px minmax(0, 1fr) 300px; }
+  .part-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}
+
 /* ---- Tablet: 2-column, summary drops to a row ---- */
 @media (min-width: 901px) and (max-width: 1180px) {
   .layout { grid-template-columns: 280px minmax(0, 1fr); }
   .summary-panel { grid-column: 1 / -1; }
-  .summary-sticky { position: static; flex-direction: row; flex-wrap: wrap; }
+  .summary-sticky { position: static; flex-direction: row; flex-wrap: wrap; max-height: none; overflow: visible; }
   .summary-sticky > * { flex: 1; min-width: 250px; }
   .primary-btn { flex-basis: 100%; }
+  /* Summary is below the whole catalog here — surface the running total up top
+     (click = jump to summary; the health pill does the same). */
+  .topbar-total { display: inline-flex; }
+  .health-pill { cursor: pointer; }
 }
 
 /* =========================================================================
@@ -498,11 +525,11 @@ body.detail-open { overflow: hidden; }
   body[data-mtab="summary"] .catalog-panel { display: none; }
 
   /* Panels fill the screen, no sticky offsets */
-  .build-panel { position: static; overflow: visible; }
+  .build-panel { position: static; overflow: visible; display: block; max-height: none; }
   .build-panel .chevron { display: none; }   /* no collapse on mobile — it's a full tab */
   .build-toggle { cursor: default; padding: 4px 4px 14px; }
   .slot-collapse { grid-template-rows: 1fr !important; opacity: 1 !important; overflow: visible; }
-  .slot-list { padding: 0; }
+  .slot-list { padding: 0; overflow: visible; }
   .slot { padding: 13px 34px 13px 13px; }
   .slot-name { font-size: 14px; }
   .slot-thumb { width: 58px; height: 44px; }
@@ -541,7 +568,7 @@ body.detail-open { overflow: hidden; }
 
   /* Summary tab: single readable column */
   .summary-panel { grid-column: auto; }
-  .summary-sticky { position: static; display: flex; flex-direction: column; gap: 14px; }
+  .summary-sticky { position: static; display: flex; flex-direction: column; gap: 14px; max-height: none; overflow: visible; }
   .summary-sticky > * { min-width: 0; width: 100%; }
   .price-big { font-size: 40px; }
   .report-list { max-height: none; }

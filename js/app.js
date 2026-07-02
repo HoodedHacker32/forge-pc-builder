@@ -29,6 +29,7 @@
     buildPanel: $('buildPanel'), buildToggle: $('buildToggle'), slotCollapse: $('slotCollapse'),
     partDetail: $('partDetail'),
     mobileNav: $('mobileNav'), mnavTotal: $('mnavTotal'), mnavBadge: $('mnavBadge'),
+    topbarTotal: $('topbarTotal'), topTotal: $('topTotal'),
   };
 
   const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
@@ -146,6 +147,10 @@
   function estimatePerformance(build) {
     const { cpu, gpu } = build;
     if (!gpu && !cpu) return null;
+    if (!gpu && !cpu.igpu) {
+      return { score: 0, tier: 'No graphics', res: '—', fps: 0,
+               note: `${cpu.name} has no integrated graphics — add a graphics card to get a picture.`, capped: false };
+    }
     const gPerf = gpu ? gpu.perf : (cpu && cpu.igpu ? 9 : 0);
     const cPerf = cpu ? cpu.perf : 60;                 // assume a decent CPU if none picked yet
     const cpuCap = 45 + cPerf * 0.65;                  // weak CPU limits a strong GPU
@@ -423,7 +428,7 @@
     if (perf) {
       el.perfEstimate.hidden = false;
       el.perfTier.textContent = perf.tier;
-      el.perfFps.textContent = '≈ ' + perf.fps;
+      el.perfFps.textContent = perf.fps ? '≈ ' + perf.fps : '—';
       el.perfRes.textContent = perf.res;
       el.perfBarFill.style.width = Math.min(100, perf.score) + '%';
       el.perfBarFill.className = perf.score >= 66 ? 'high' : perf.score >= 40 ? 'mid' : 'low';
@@ -492,7 +497,8 @@
     el.healthPill.className = 'health-pill ' + cls;
     el.healthLabel.textContent = label;
 
-    // Mobile bottom nav mirrors the total + essentials progress.
+    // Mobile bottom nav + tablet topbar mirror the total.
+    if (el.topTotal) el.topTotal.textContent = fmtPrice(total);
     el.mnavTotal.textContent = fmtPrice(total);
     el.mnavBadge.textContent = `${filledEssentials}/${totalEssentials}`;
     el.mnavBadge.className = 'mnav-badge ' + cls;
@@ -753,6 +759,7 @@
   });
   on(el.partGrid, 'keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest('[data-quickadd]')) return; // let the Add button behave as a button
     const card = e.target.closest('[data-part]');
     if (card) { e.preventDefault(); openDetail(card.dataset.part); }
   });
@@ -778,6 +785,17 @@
     if (el.presetModal && !el.presetModal.hidden) closePresets();
     else if (el.partDetail && !el.partDetail.hidden) location.hash = '';
   });
+
+  /* In the tablet band (901–1180px) the summary sits below the whole catalog —
+     the topbar total / health pill jump straight to it. */
+  const jumpToSummary = () => {
+    const s = document.querySelector('.summary-panel');
+    if (s && window.matchMedia('(min-width: 901px) and (max-width: 1180px)').matches) {
+      s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  on(el.topbarTotal, 'click', jumpToSummary);
+  on(el.healthPill, 'click', jumpToSummary);
 
   /* ---- Build panel manual collapse (desktop convenience only) ---- */
   on(el.buildToggle, 'click', () => {

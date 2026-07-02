@@ -19,6 +19,7 @@ function memMatches(part, memType) {
 
 /* Estimate total system power draw (W) from the selected parts. */
 function estimateDraw(build) {
+  if (!Object.values(build).some(Boolean)) return 0; // empty build draws nothing
   let w = 0;
   if (build.cpu) w += build.cpu.tdp || 0;
   if (build.gpu) w += build.gpu.tdp || 0;
