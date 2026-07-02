@@ -17,6 +17,26 @@ function memMatches(part, memType) {
   return Array.isArray(m) ? m.includes(memType) : m === memType;
 }
 
+/* A GPU that draws power through a 12VHPWR / 12V-2×6 (16-pin) connector. */
+function gpuUses16pin(gpu) {
+  return /16-pin|12VHPWR|12V-2/i.test(gpu.power_conn || '');
+}
+/* A PSU that ships a native 16-pin (12VHPWR / 12V-2×6) GPU cable. Read the connector
+   string, not `atx3` alone — some ATX 3.x units still bundle only 8-pin cables. */
+function psuHas16pin(psu) {
+  return /16-pin|12VHPWR|12V-2/i.test(psu.power_conn || '');
+}
+/* Parse a PCIe generation from strings like "PCIe 5.0 ×4", "5.0" → 5. */
+function pcieGen(str) {
+  const m = String(str || '').match(/(\d(?:\.\d)?)/);
+  return m ? parseFloat(m[1]) : null;
+}
+/* Leading module count of a kit string like "2 × 16GB" → 2. */
+function dimmCount(modules) {
+  const m = String(modules || '').match(/^\s*(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
 /* Estimate total system power draw (W) from the selected parts. */
 function estimateDraw(build) {
   if (!Object.values(build).some(Boolean)) return 0; // empty build draws nothing
@@ -47,6 +67,10 @@ function analyse(build) {
   if (cpu && mobo) {
     if (cpu.socket === mobo.socket) {
       add('ok', 'mobo', `${cpu.name} fits the ${mobo.socket} socket.`);
+      // Newer CPU generations can need a BIOS update on a board that shipped earlier.
+      if (cpu.socket === 'AM5' && /Zen 5/.test(cpu.arch || '')) {
+        add('info', 'mobo', `Zen 5 needs an up-to-date AM5 BIOS — a board made before Zen 5 launched may need a BIOS update first (most AM5 boards can flash without a CPU installed).`);
+      }
     } else {
       add('error', 'mobo', `Socket mismatch — ${cpu.name} needs ${cpu.socket}, but this board is ${mobo.socket}. Pick an ${cpu.socket} motherboard.`);
     }
@@ -59,6 +83,16 @@ function analyse(build) {
     } else {
       const boardMem = Array.isArray(mobo.mem) ? mobo.mem.join('/') : mobo.mem;
       add('error', 'ram', `Memory mismatch — this board takes ${boardMem}, but the kit is ${ram.mem}. Choose ${boardMem} memory.`);
+    }
+    // More sticks than the board has DIMM slots (e.g. a 4-module kit in a 2-slot ITX board).
+    const sticks = dimmCount(ram.modules);
+    if (sticks && mobo.ramSlots && sticks > mobo.ramSlots) {
+      add('error', 'ram', `This ${sticks}-stick kit won't fit — ${mobo.name} has only ${mobo.ramSlots} DIMM slots.`);
+    }
+    // Rated speed above the JEDEC default needs an XMP/EXPO profile enabled in BIOS.
+    const jedec = ram.mem === 'DDR5' ? 5600 : 3200;
+    if (ram.speed > jedec) {
+      add('info', 'ram', `To reach its rated ${ram.speed.toLocaleString('en-IE')}MT/s, enable ${ram.mem === 'DDR5' ? 'EXPO/XMP' : 'XMP/DOCP'} in BIOS — otherwise it runs at the ${jedec.toLocaleString('en-IE')}MT/s default.`);
     }
   }
   if (cpu && ram && !memMatches(cpu, ram.mem) && cpu.socket !== 'LGA1700') {
@@ -144,12 +178,28 @@ function analyse(build) {
     }
   }
 
+  /* ---- PSU ↔ GPU power connector ---- */
+  // Only worth flagging once the PSU is actually big enough for the card; an
+  // undersized PSU is already an error above.
+  if (psu && gpu && gpuUses16pin(gpu) && psu.watt >= gpu.psu_min) {
+    if (psuHas16pin(psu)) {
+      add('ok', 'psu', `${psu.name} has a native 16-pin (12V-2×6) cable for ${gpu.name}.`);
+    } else {
+      add('info', 'psu', `${gpu.name} uses a 16-pin (12VHPWR) socket, which this PSU lacks — use the adapter bundled with the card (it splits from the PSU's 8-pin cables). A native-cable ATX 3.x PSU is tidier and safer.`);
+    }
+  }
+
   /* ---- Storage ↔ Motherboard M.2 ---- */
   if (storage && mobo) {
     if (storage.iface === 'M.2' && mobo.m2 < 1) {
       add('error', 'storage', `This board has no M.2 slot for an NVMe drive.`);
     } else if (storage.iface === 'M.2') {
       add('ok', 'storage', `NVMe drive uses one of the board's ${mobo.m2} M.2 slots.`);
+      // A faster SSD than the board's PCIe generation still works, just capped in speed.
+      const sGen = pcieGen(storage.pcie), bGen = pcieGen(mobo.pcie);
+      if (sGen && bGen && sGen > bGen) {
+        add('info', 'storage', `${storage.name} is a PCIe ${sGen} drive on a PCIe ${bGen} board — it'll run at PCIe ${bGen} speed (still fast, just short of its rated peak).`);
+      }
     } else {
       add('ok', 'storage', `SATA drive connects via a standard SATA port.`);
     }

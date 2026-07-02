@@ -296,6 +296,41 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
     tray stays pinned on scroll, chips scroll to reveal PSU/Case/Cooler, chip-click selects the
     category. Assets bumped `v=16`.
 
+- **2026-07-02 — no nested scrollbars + deeper compatibility checks (`v=17`):**
+  • **Removed the internal scrollbars** on the summary column. Owner: "there needn't be
+    scrolling on the build-stats/price panel — you can scroll the whole page; too many
+    individually-scrolling elements feels crowded." Reverted the v=15 internal-scroll approach:
+    dropped `max-height`/`overflow-y:auto` from `.summary-sticky`, `.report-list` (was
+    `max-height:44vh`), `.slot-list`, and `.build-panel`. Panels stay sticky but never scroll
+    internally. This is safe: a sticky column taller than the viewport still reveals its bottom
+    at max **page** scroll (its bottom aligns with the grid cell / page bottom, and with
+    `align-items:start` the panel's own cell is exactly its height, so sticky has no travel and
+    it flows) — verified the copy button's document-bottom (1385) sits within `scrollHeight`
+    (1445) with no clipping ancestor. NOTE: the preview sandbox blocks `window.scrollTo`, so
+    reachability was checked via rect+scrollHeight math, not by actually scrolling.
+  • **Compatibility engine — new checks** (from a review flagging false-positive risks), all
+    using existing accurate fields, no fabricated specs. Most are `info`-severity so they read
+    as "works, with a caveat" and do **not** badge catalog cards error/warn (`compatFlag` only
+    escalates on error/warn):
+    – **PSU↔GPU power connector** (`gpuUses16pin`/`psuHas16pin`, regex on `power_conn`, not
+      `atx3` alone — some ATX3 units bundle only 8-pin): a 12VHPWR/12V-2×6 GPU on a PSU without a
+      native 16-pin cable → info "use the adapter bundled with the card"; native cable → ok.
+      Gated on `psu.watt >= gpu.psu_min` so it doesn't pile onto an undersized-PSU error.
+    – **Storage PCIe generation**: a Gen5 SSD on a Gen4 board (or Gen4 on Gen3) → info "runs at
+      PCIe N speed" (`pcieGen()` parses `storage.pcie`/`mobo.pcie`).
+    – **RAM EXPO/XMP**: kit rated above the JEDEC default (DDR5>5600, DDR4>3200) → info that you
+      must enable EXPO/XMP in BIOS to reach the rated speed.
+    – **RAM DIMM count vs slots** (`dimmCount(ram.modules)` > `mobo.ramSlots`) → error. (Guard —
+      never fires with the current all-2-stick catalog, but correct + future-proof.)
+    – **Zen 5 BIOS-update note**: a Zen 5 CPU on AM5 → info that an older AM5 board may need a
+      BIOS update (most flash without a CPU). Accurate general guidance, no per-board data.
+  • **Deferred** (would require fabricating spec fields the catalog doesn't carry, which breaks
+    the owner's accuracy principle — offer to add the data if wanted): VRM capacity, per-board
+    BIOS-revision matrices, GPU thickness/height/slot-width, front-radiator GPU clearance,
+    cooler↔RAM height clearance, USB-C/front-panel headers, M.2↔SATA lane sharing, mobo max
+    memory capacity. GPU transient spikes are already absorbed by `recommendedPsu`'s 1.5×
+    headroom; case fans/board sit in the fixed +70W overhead. Assets bumped `v=17`.
+
 ## Repo & deployment
 
 - GitHub repo: **https://github.com/HoodedHacker32/forge-pc-builder** (public).

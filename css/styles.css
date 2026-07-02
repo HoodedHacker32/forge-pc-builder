@@ -145,11 +145,11 @@ body {
 }
 
 /* ---- Build panel (left) ---- */
-/* Sticky columns are capped to the viewport and scroll internally — otherwise on
-   short windows (landscape phones >900px, small laptop windows) the bottom slots
-   stick below the fold and can never be scrolled into view. */
-.build-panel { padding: 0; position: sticky; top: 90px; overflow: hidden;
-  display: flex; flex-direction: column; max-height: calc(100vh - 104px); }
+/* Sticky, but NOT internally scrolled — the whole page scrolls. A sticky column
+   taller than the viewport still reveals its bottom at max page scroll (its bottom
+   aligns with the grid cell / page bottom), so nothing is trapped, and we avoid a
+   second nested scrollbar (owner: too many individual scrollers feels crowded). */
+.build-panel { padding: 0; position: sticky; top: 90px; overflow: hidden; }
 .build-toggle {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   background: none; border: none; cursor: pointer; color: var(--text);
@@ -169,7 +169,7 @@ body {
   overflow: hidden; opacity: 1;
 }
 .build-panel.collapsed .slot-collapse { grid-template-rows: 0fr; opacity: 0; }
-.slot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; padding: 0 16px 18px; min-height: 0; overflow-y: auto; }
+.slot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; padding: 0 16px 18px; min-height: 0; }
 
 .slot {
   display: flex; align-items: center; gap: 12px; padding: 10px 12px;
@@ -394,8 +394,7 @@ body.detail-open { overflow: hidden; }
 
 /* ---- Summary (right) ---- */
 .summary-panel { padding: 0; background: none; border: none; box-shadow: none; backdrop-filter: none; }
-.summary-sticky { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 14px;
-  max-height: calc(100vh - 104px); overflow-y: auto; }
+.summary-sticky { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 14px; }
 .price-card {
   padding: 22px; border: 1px solid var(--stroke); border-top: 3px solid var(--red);
   background: radial-gradient(360px 180px at 100% 0%, rgba(255, 37, 50, 0.16), transparent 70%), var(--panel-solid);
@@ -409,7 +408,7 @@ body.detail-open { overflow: hidden; }
 
 .report { padding: 18px; border: 1px solid var(--stroke); background: var(--panel); backdrop-filter: blur(20px); }
 .report h3 { font-family: var(--display); font-size: 13px; margin-bottom: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
-.report-list { list-style: none; display: flex; flex-direction: column; gap: 8px; max-height: 44vh; overflow-y: auto; padding-right: 4px; }
+.report-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 .report-item { display: flex; gap: 9px; font-size: 12px; line-height: 1.45; padding: 9px 11px; border: 1px solid transparent; border-left-width: 3px; }
 .report-item svg { flex-shrink: 0; margin-top: 1px; }
 .report-item.ok    { color: #cbeede; background: rgba(70, 211, 154, 0.06); border-left-color: var(--ok); }
