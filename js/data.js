@@ -169,6 +169,38 @@ const PARTS = {
     { id: 'case-a4h2o',  name: 'Lian Li A4-H2O (ITX)',     price: 129, form: 'Mini-ITX',  gpu_max: 322, cooler_max: 70,  psu_form: 'SFX', radiator: 'Up to 240mm (side)', img: 'https://c1.neweggimages.com/productimage/nb640/AFSTS2601160IL7HO75.jpg', spec: 'Mini-ITX · tiny · SFX PSU only' },
     { id: 'case-ncore',  name: 'NR200P MAX (ITX)',         price: 149, form: 'Mini-ITX',  gpu_max: 336, cooler_max: 67,  psu_form: 'SFX', radiator: '280mm AIO included', img: 'https://www.bhphotovideo.com/images/images500x500/cooler_master_nr200p_mcnn85_slo_masterbox_nr200p_max_mini_itx_1672132226_1689128.jpg', spec: 'Mini-ITX · AIO included class' },
     { id: 'case-h210i',  name: 'NZXT H210i (ITX)',          price: 109, form: 'Mini-ITX',  gpu_max: 325, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 240mm (front)', img: 'https://c1.neweggimages.com/productimage/nb640/11-146-314-V80.jpg', spec: 'Mini-ITX · takes an ATX PSU · clean' },
+
+    /* ---- ATX mid-towers ---- */
+    { id: 'case-5000d',      name: 'Corsair 5000D Airflow',        price: 149, form: 'ATX', gpu_max: 400, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · high airflow · very roomy' },
+    { id: 'case-4000x',      name: 'Corsair iCUE 4000X RGB',       price: 119, form: 'ATX', gpu_max: 360, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            spec: 'ATX · RGB · tempered glass' },
+    { id: 'case-lancool216', name: 'Lian Li Lancool 216',          price: 109, form: 'ATX', gpu_max: 392, cooler_max: 176, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · dual 160mm intake · airflow' },
+    { id: 'case-lancool3',   name: 'Lian Li Lancool III',          price: 159, form: 'ATX', gpu_max: 435, cooler_max: 187, psu_form: 'ATX', radiator: 'Up to 420mm (front/top)',        spec: 'ATX · huge · dual 420mm radiator' },
+    { id: 'case-o11vision',  name: 'Lian Li O11 Vision',           price: 179, form: 'ATX', gpu_max: 452, cooler_max: 167, psu_form: 'ATX', radiator: 'Up to 360mm (top/side/bottom)',   spec: 'ATX · three-sided seamless glass' },
+    { id: 'case-o11mini',    name: 'Lian Li O11 Dynamic Mini',     price: 129, form: 'ATX', gpu_max: 362, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         spec: 'ATX · compact dual-chamber' },
+    { id: 'case-h7flow',     name: 'NZXT H7 Flow',                 price: 129, form: 'ATX', gpu_max: 400, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · perforated panels · airflow' },
+    { id: 'case-h9flow',     name: 'NZXT H9 Flow',                 price: 159, form: 'ATX', gpu_max: 435, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (top/side)',         spec: 'ATX · dual-chamber · panoramic glass' },
+    { id: 'case-torrent',    name: 'Fractal Torrent',              price: 199, form: 'ATX', gpu_max: 461, cooler_max: 188, psu_form: 'ATX', radiator: 'Up to 420mm (front/bottom)',     spec: 'ATX · max airflow · dual 180mm' },
+    { id: 'case-pb500dx',    name: 'be quiet! Pure Base 500DX',    price: 99,  form: 'ATX', gpu_max: 369, cooler_max: 190, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            spec: 'ATX · quiet · tall cooler clearance' },
+    { id: 'case-g360a',      name: 'Phanteks Eclipse G360A',       price: 99,  form: 'ATX', gpu_max: 400, cooler_max: 162, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · mesh · 3 ARGB fans' },
+    { id: 'case-td500',      name: 'Cooler Master TD500 Mesh V2',  price: 99,  form: 'ATX', gpu_max: 410, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            spec: 'ATX · mesh · crystalline front' },
+    { id: 'case-y60',        name: 'HYTE Y60',                     price: 199, form: 'ATX', gpu_max: 375, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         spec: 'ATX · panoramic · vertical GPU' },
+    { id: 'case-gt502',      name: 'ASUS TUF Gaming GT502',        price: 159, form: 'ATX', gpu_max: 400, cooler_max: 162, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         spec: 'ATX · dual-chamber showcase' },
+    { id: 'case-skytwo',     name: 'Montech Sky Two',              price: 89,  form: 'ATX', gpu_max: 380, cooler_max: 175, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · value · 4 fans included' },
+
+    /* ---- Full towers ---- */
+    { id: 'case-define7',    name: 'Fractal Define 7',             price: 179, form: 'ATX', gpu_max: 467, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 420mm (front)',            spec: 'Full tower · silent · sound-damped' },
+    { id: 'case-haf700',     name: 'Cooler Master HAF 700',        price: 269, form: 'ATX', gpu_max: 490, cooler_max: 166, psu_form: 'ATX', radiator: 'Up to 420mm (front)',            spec: 'Full tower · monster airflow' },
+    { id: 'case-nv7',        name: 'Phanteks NV7',                 price: 209, form: 'ATX', gpu_max: 503, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 480mm',                    spec: 'Full tower · showcase · massive' },
+
+    /* ---- Micro-ATX ---- */
+    { id: 'case-ap201',      name: 'ASUS Prime AP201',             price: 89,  form: 'Micro-ATX', gpu_max: 338, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (side)',       spec: 'Micro-ATX · compact mesh' },
+    { id: 'case-q300l',      name: 'Cooler Master Q300L',          price: 49,  form: 'Micro-ATX', gpu_max: 360, cooler_max: 159, psu_form: 'ATX', radiator: 'Up to 240mm (top)',        spec: 'Micro-ATX · budget · tiny' },
+
+    /* ---- Mini-ITX / SFF ---- */
+    { id: 'case-nr200p',     name: 'Cooler Master NR200P',         price: 99,  form: 'Mini-ITX', gpu_max: 330, cooler_max: 155, psu_form: 'SFX', radiator: 'Up to 280mm (side)',        spec: 'Mini-ITX · SFF classic · air or AIO' },
+    { id: 'case-q58',        name: 'Lian Li Q58',                  price: 139, form: 'Mini-ITX', gpu_max: 320, cooler_max: 67,  psu_form: 'SFX', radiator: 'Up to 280mm (side)',        spec: 'Mini-ITX · 14.6L · PCIe riser' },
+    { id: 'case-meshlicious',name: 'SSUPD Meshlicious',            price: 129, form: 'Mini-ITX', gpu_max: 336, cooler_max: 73,  psu_form: 'SFX', radiator: 'Up to 280mm (side)',        spec: 'Mini-ITX · full-mesh SFF' },
+    { id: 'case-terra',      name: 'Fractal Terra',                price: 169, form: 'Mini-ITX', gpu_max: 322, cooler_max: 77,  psu_form: 'SFX', radiator: 'Air-cooled (10.4L)',         spec: 'Mini-ITX · wood front · pocket SFF' },
   ],
 
   /* -------------------------------------------------------- Coolers ---- */
