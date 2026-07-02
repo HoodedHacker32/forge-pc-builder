@@ -498,6 +498,64 @@ body.detail-open { overflow: hidden; }
 }
 
 /* =========================================================================
+   LANDSCAPE TABLET / LAPTOP (901–1400px, landscape) — purpose-built layout.
+   Vertical space is scarce here, so the full-height "Your Build" tower is
+   replaced by a compact horizontal build TRAY docked under the topbar; the
+   catalog gets the full width beneath it, and the summary spreads out below
+   it as a row. Portrait tablets in this width range keep the stacked column
+   layout above (they have the vertical room for a tower).
+   ========================================================================= */
+@media (min-width: 901px) and (max-width: 1400px) and (orientation: landscape) {
+  .layout { display: block; padding: 14px clamp(14px, 3vw, 32px) 60px; max-width: 1500px; }
+
+  /* ---- Build tray: sticky horizontal strip of slot chips under the topbar ---- */
+  .build-panel {
+    position: sticky; top: 73px; z-index: 30; margin-bottom: 16px;
+    display: flex; flex-direction: row; align-items: stretch;
+    max-height: none; overflow: visible;
+  }
+  .build-toggle {
+    flex-shrink: 0; width: auto; cursor: default;
+    flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px;
+    padding: 10px 18px; border-right: 1px solid var(--stroke);
+  }
+  .build-toggle .chevron { display: none; }        /* always-open strip — no collapse here */
+  .panel-head-main { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .build-toggle h2 { font-size: 13px; }
+
+  /* Force the slot list open (ignore any leftover collapsed state) and lay it out
+     as a single horizontally-scrolling row of compact chips. */
+  .slot-collapse {
+    grid-template-rows: 1fr !important; opacity: 1 !important;
+    overflow: visible; flex: 1; min-width: 0;
+  }
+  .slot-list {
+    flex-direction: row; gap: 10px; padding: 12px 16px;
+    overflow-x: auto; overflow-y: hidden; min-height: 0;
+  }
+  .slot { width: 190px; flex-shrink: 0; padding: 9px 11px; }
+  .slot-thumb { width: 42px; height: 34px; }
+  .slot-ico { width: 34px; height: 34px; }
+  /* No hover on touch tablets — keep the remove button always reachable. */
+  .slot-remove { opacity: 1; }
+
+  /* ---- Catalog: full width, more columns ---- */
+  .part-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+
+  /* ---- Summary: full-width row beneath the catalog (not a tall sticky rail) ---- */
+  .summary-sticky {
+    position: static; flex-direction: row; flex-wrap: wrap; gap: 14px;
+    max-height: none; overflow: visible;
+  }
+  .summary-sticky > * { flex: 1; min-width: 260px; }
+  .primary-btn { flex-basis: 100%; }
+
+  /* Running total up top jumps down to the summary (health pill does the same). */
+  .topbar-total { display: inline-flex; }
+  .health-pill { cursor: pointer; }
+}
+
+/* =========================================================================
    MOBILE APP LAYOUT (≤900px) — one full-screen view at a time, bottom tabs
    ========================================================================= */
 @media (max-width: 900px) {

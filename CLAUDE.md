@@ -273,6 +273,29 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
     (the grid keydown handler preventDefault'd the native button). Quick-add buttons are now
     excluded from that handler.
 
+- **2026-07-02 — landscape tablet/laptop gets its own layout (`v=16`):** owner: on landscape
+  tablet/laptop aspect ratios the tall sticky "Your Build" tower ate the screen — "you want to
+  see all that info at once." Added a **purpose-built landscape layout** (fourth distinct
+  layout, alongside wide desktop / portrait-tablet stack / mobile bottom-tabs), gated on
+  `@media (min-width:901px) and (max-width:1400px) and (orientation: landscape)`:
+  • `.layout` becomes a single block column. `.build-panel` turns into a **sticky horizontal
+    build TRAY** docked under the topbar (`top: 73px` = topbar height, `z-index:30`): the
+    "Your Build · N/7" label sits at the left, and the slots become a **horizontally-scrolling
+    row of ~190px chips** (`.slot-list` flips to `flex-direction:row; overflow-x:auto`). No
+    collapse in this mode — the chevron is hidden and the toggle is inert (JS `isTrayLayout()`
+    guards the collapse handler); slots are force-opened via `!important`.
+  • The catalog gets the **full width** below the tray (`repeat(auto-fill,minmax(210px,1fr))`
+    → 4–5 columns), and the summary spreads out beneath it as a **row** (reusing the tablet-band
+    row treatment). The topbar running total (`#topbarTotal`) is shown and jumps down to the
+    summary — `jumpToSummary` now keys off the button's own visibility (`display!=='none'`)
+    instead of a hardcoded media query, so it works in both the tablet and landscape bands.
+  • **Orientation matters:** portrait tablets in the 901–1400 width range (e.g. iPad Pro
+    1024×1366 portrait) deliberately keep the stacked 2-column tower layout — they have the
+    vertical room. Only landscape gets the tray. Verified live at 1280×800, 1366×768, 1100×700,
+    1024×1366 portrait (stack), 1920 (3-col untouched), 375 (mobile untouched); console clean,
+    tray stays pinned on scroll, chips scroll to reveal PSU/Case/Cooler, chip-click selects the
+    category. Assets bumped `v=16`.
+
 ## Repo & deployment
 
 - GitHub repo: **https://github.com/HoodedHacker32/forge-pc-builder** (public).

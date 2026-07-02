@@ -33,6 +33,8 @@
   };
 
   const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+  // Landscape tablet/laptop uses the horizontal build-tray layout (no collapse there).
+  const isTrayLayout = () => window.matchMedia('(min-width: 901px) and (max-width: 1400px) and (orientation: landscape)').matches;
 
   /* ---- Icons (inline SVG) ---- */
   const ICONS = {
@@ -788,9 +790,11 @@
 
   /* In the tablet band (901–1180px) the summary sits below the whole catalog —
      the topbar total / health pill jump straight to it. */
+  // The topbar total is only shown when the summary lives below the catalog
+  // (tablet + landscape-tray bands), so key the jump off its visibility.
   const jumpToSummary = () => {
     const s = document.querySelector('.summary-panel');
-    if (s && window.matchMedia('(min-width: 901px) and (max-width: 1180px)').matches) {
+    if (s && el.topbarTotal && getComputedStyle(el.topbarTotal).display !== 'none') {
       s.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
@@ -799,7 +803,7 @@
 
   /* ---- Build panel manual collapse (desktop convenience only) ---- */
   on(el.buildToggle, 'click', () => {
-    if (isMobile()) return; // on mobile the build panel is its own tab
+    if (isMobile() || isTrayLayout()) return; // mobile tab / landscape tray don't collapse
     const willCollapse = !el.buildPanel.classList.contains('collapsed');
     el.buildPanel.classList.toggle('collapsed', willCollapse);
     el.buildToggle.setAttribute('aria-expanded', String(!willCollapse));
