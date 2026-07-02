@@ -237,6 +237,18 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
     performance card inside the price card (tier, ≈avg FPS, target resolution, a 0–100 bar, and
     a note; GPU-dominated with a weak-CPU cap). Verified: Sweet preset → High-end / ≈122 FPS /
     1440p Ultra; 4090 page shows the Prev-gen warning + Flagship "Our take". Assets bumped `v=13`.
+- **2026-07-02 — expanded image sheet → catalog grew to 114 parts (`v=14`):** owner supplied a
+  bigger `hardware_product_images.xlsx` (264 rows, now incl. current-gen + previously-missing
+  SKUs) and said "any products/lines in the sheet but not in the app should just be added." Two
+  operations: (1) **backfilled `img`** onto 47 existing line-art parts that now had a sheet match
+  (all current-gen GPUs, the Zen-5 / Core-Ultra CPUs, most boards, DDR4, HDD, SFX PSU, the
+  Fractal/NZXT/Lian-Li cases, the air/AIO coolers); (2) **added ~26 new parts** — CPUs (7600X,
+  7950X, 5950X, 5600X, i5-13400F, i9-13900K), 11 motherboards (Z790/B760/X670E/B650M/B550M/B450M
+  models), 3 DDR5 kits (Crucial Pro, T-Force Delta, Dominator Platinum), Kingston KC3000,
+  EVGA SuperNOVA 850, NZXT H210i, and Noctua NH-D15 / Hyper 212 / Corsair H150i coolers. Kept
+  the `legacy` + `perf` + advice conventions. Now 114 parts, only 2 without a photo. The backfill
+  was done with a line-based Node script (plain string ops — **avoid `\s` in `node -e` via the
+  Bash tool; Git Bash eats the backslash**, matched literal spaces instead). Assets bumped `v=14`.
 
 ## Repo & deployment
 
@@ -256,12 +268,13 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
    one, bespoke line-art otherwise.** History: a first photo experiment (5 mismatched Wikimedia
    marketing shots) was removed 2026-07-01 for looking janky, and the catalog went line-art
    only. Then the owner **supplied a consistent image set** (`hardware_product_images.xlsx`,
-   175 white-background Newegg/brand-CDN product shots) and asked for photos back. Now:
-   `partThumb()` renders `p.img` (a hosted URL) with an `onerror` fallback to `partArt()`; the
-   media plate gets `.has-photo` (a light gradient so white-bg product shots blend) and reverts
-   to the dark line-art plate if the image 404s. ~39 parts have a matched `img`; the rest
-   (incl. all current-gen RTX 50 / RX 9000, which the sheet had no shots for) stay on line-art.
-   The mix reads as deliberate (real product = light plate, illustrated = dark blueprint). The
+   white-background Newegg/brand-CDN product shots) — later expanded to a 264-row sheet that
+   covers current-gen too. Now: `partThumb()` renders `p.img` (a hosted URL) with an `onerror`
+   fallback to `partArt()`; the media plate gets `.has-photo` (a light gradient so white-bg
+   product shots blend) and reverts to the dark line-art plate if the image 404s. As of `v=14`
+   **all but 2 of 114 parts have a matched `img`** (only `mb-b760-ddr5`, no sheet match, and the
+   generic stock cooler stay on line-art). The mix reads as deliberate (real product = light
+   plate, illustrated = dark blueprint). The
    sandbox **does** reach the Newegg/ASUS CDNs, so photos are verifiable in preview (mind
    `loading="lazy"` — below-fold ones show `naturalWidth 0` until scrolled). Only wire
    **https** URLs (one Palit `http://` shot was dropped — mixed-content-blocked on Pages).
