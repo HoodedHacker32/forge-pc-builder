@@ -347,6 +347,17 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   premise means prices should be well above normal; raised DDR5 ~1.6–1.8× (32GB DDR5-6000
   €199 → €359, 96GB → €1049) and DDR4 up too, and updated the shortage note (~2.5–3.5× 2024
   lows). Other categories' prices were left as-is pending specifics from the owner.
+- **2026-07-02 — researched RRP reprice (`v=20`):** owner: "can you actually look up average
+  RRPs?" WebSearched current (Jul 2026) EU prices and repriced ~41 parts. Findings: the 2026
+  AI-driven **DRAM + NAND shortage** is the story — RAM ~2.5–4× and **SSDs ~2×** their 2024 lows
+  (Samsung 990 Pro 2TB ~€400, WD SN850X €130→€300+), so storage was as wrong as RAM and got
+  ~doubled (990 Pro 4TB €309→€649, etc.). GPUs/CPUs sit near MSRP and mostly needed only tweaks:
+  RTX 5090 €1999→€2199, 5070 €649→€599, RX 9060 XT →€389 (9070 XT €689 / 9070 €629 were already
+  exact EU MSRP); legacy 4090 →€2299 / 4080 →€1149 (discontinued, elevated). CPUs: 9800X3D
+  €499→€549, 9950X3D →€749, and **Core Ultra 7 265K €409→€309 / Ultra 5 →€279 (Intel cut these)**.
+  Sources: Tom's Hardware RAM/SSD/GPU price trackers, VideoCardz, TechPowerUp, dropreference EU
+  shortage data, bestvaluegpu EU. Header comment documents the shortage so the highs aren't read
+  as typos. Non-memory categories (mobo/PSU/case/cooler) aren't shortage-hit and were left.
 
 ## Repo & deployment
 
