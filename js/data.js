@@ -85,21 +85,22 @@ const PARTS = {
   ],
 
   /* ----------------------------------------------------------- RAM ----- */
-  // NOTE: Memory prices reflect the 2026 global DRAM shortage — DDR5/DDR4 kits
-  // are running roughly 1.6–2.0× their 2024 lows. Flagged with `shortage: true`.
+  // NOTE: Memory prices reflect the (worsening) 2026 global DRAM shortage — AI/HBM
+  // demand pushed DDR5 kits to roughly 2.5–3.5× their 2024 lows (32GB DDR5-6000 now
+  // ~€350). DDR4 is EOL and also elevated. All flagged with `shortage: true`.
   ram: [
-    { id: 'ram-ddr5-16-6000', name: 'Corsair Vengeance 16GB DDR5-6000',       price: 109, mem: 'DDR5', size: 16, modules: '2 × 8GB',  speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-888-01.jpg', spec: '2×8GB · 6000MT/s · CL30 · entry' },
-    { id: 'ram-ddr5-32-6000', name: 'G.Skill Trident Z5 32GB DDR5-6000',      price: 199, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-374-351-09.png', spec: '2×16GB · 6000MT/s · CL30 · AM5 sweet spot' },
-    { id: 'ram-ddr5-32-6400', name: 'Kingston Fury Beast 32GB DDR5-6400',     price: 219, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6400, cl: 32, voltage: 1.40, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-242-737-02.jpg', spec: '2×16GB · 6400MT/s · CL32' },
-    { id: 'ram-ddr5-32-8000', name: 'G.Skill Trident Z5 RGB 32GB DDR5-8000',  price: 329, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 8000, cl: 38, voltage: 1.45, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-374-351-09.png', spec: '2×16GB · 8000MT/s · CL38 · Arrow Lake / high-OC' },
-    { id: 'ram-ddr5-48-6000', name: 'Corsair Vengeance 48GB DDR5-6000',       price: 279, mem: 'DDR5', size: 48, modules: '2 × 24GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-888-01.jpg', spec: '2×24GB · 6000MT/s · CL30 · extra headroom' },
-    { id: 'ram-ddr5-64-6000', name: 'Corsair Vengeance 64GB DDR5-6000',       price: 399, mem: 'DDR5', size: 64, modules: '2 × 32GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-888-01.jpg', spec: '2×32GB · 6000MT/s · heavy multitask' },
-    { id: 'ram-ddr5-96-6000', name: 'G.Skill Trident Z5 96GB DDR5-6000',      price: 589, mem: 'DDR5', size: 96, modules: '2 × 48GB', speed: 6000, cl: 30, voltage: 1.40, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-374-351-09.png', spec: '2×48GB · 6000MT/s · creators & workstation' },
-    { id: 'ram-ddr5-32-6000-cru', name: 'Crucial Pro OC 32GB DDR5-6000',        price: 189, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6000, cl: 36, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-156-394-12.jpg', spec: '2×16GB · 6000MT/s · CL36 · value OC' },
-    { id: 'ram-ddr5-32-6000-tf',  name: 'Team T-Force Delta RGB 32GB DDR5-6000', price: 179, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-331-923-02.jpg', spec: '2×16GB · 6000MT/s · CL30 · RGB' },
-    { id: 'ram-ddr5-32-6400-dom', name: 'Corsair Dominator Platinum RGB 32GB DDR5-6400', price: 249, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6400, cl: 32, voltage: 1.40, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-946-02.png', spec: '2×16GB · 6400MT/s · CL32 · premium RGB' },
-    { id: 'ram-ddr4-16-3600', name: 'Corsair Vengeance LPX 16GB DDR4',        price: 72,  mem: 'DDR4', size: 16, modules: '2 × 8GB',  speed: 3600, cl: 18, voltage: 1.35, shortage: true, legacy: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-233-859-V03.jpg', spec: '2×8GB · 3600MT/s · CL18 · legacy AM4/LGA1700' },
-    { id: 'ram-ddr4-32-3600', name: 'G.Skill Ripjaws V 32GB DDR4-3600',       price: 129, mem: 'DDR4', size: 32, modules: '2 × 16GB', speed: 3600, cl: 16, voltage: 1.35, shortage: true, legacy: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-232-907-03.jpg', spec: '2×16GB · 3600MT/s · CL16 · legacy' },
+    { id: 'ram-ddr5-16-6000', name: 'Corsair Vengeance 16GB DDR5-6000',       price: 179, mem: 'DDR5', size: 16, modules: '2 × 8GB',  speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-888-01.jpg', spec: '2×8GB · 6000MT/s · CL30 · entry' },
+    { id: 'ram-ddr5-32-6000', name: 'G.Skill Trident Z5 32GB DDR5-6000',      price: 359, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-374-351-09.png', spec: '2×16GB · 6000MT/s · CL30 · AM5 sweet spot' },
+    { id: 'ram-ddr5-32-6400', name: 'Kingston Fury Beast 32GB DDR5-6400',     price: 399, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6400, cl: 32, voltage: 1.40, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-242-737-02.jpg', spec: '2×16GB · 6400MT/s · CL32' },
+    { id: 'ram-ddr5-32-8000', name: 'G.Skill Trident Z5 RGB 32GB DDR5-8000',  price: 519, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 8000, cl: 38, voltage: 1.45, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-374-351-09.png', spec: '2×16GB · 8000MT/s · CL38 · Arrow Lake / high-OC' },
+    { id: 'ram-ddr5-48-6000', name: 'Corsair Vengeance 48GB DDR5-6000',       price: 499, mem: 'DDR5', size: 48, modules: '2 × 24GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-888-01.jpg', spec: '2×24GB · 6000MT/s · CL30 · extra headroom' },
+    { id: 'ram-ddr5-64-6000', name: 'Corsair Vengeance 64GB DDR5-6000',       price: 699, mem: 'DDR5', size: 64, modules: '2 × 32GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-888-01.jpg', spec: '2×32GB · 6000MT/s · heavy multitask' },
+    { id: 'ram-ddr5-96-6000', name: 'G.Skill Trident Z5 96GB DDR5-6000',      price: 1049, mem: 'DDR5', size: 96, modules: '2 × 48GB', speed: 6000, cl: 30, voltage: 1.40, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-374-351-09.png', spec: '2×48GB · 6000MT/s · creators & workstation' },
+    { id: 'ram-ddr5-32-6000-cru', name: 'Crucial Pro OC 32GB DDR5-6000',        price: 339, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6000, cl: 36, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-156-394-12.jpg', spec: '2×16GB · 6000MT/s · CL36 · value OC' },
+    { id: 'ram-ddr5-32-6000-tf',  name: 'Team T-Force Delta RGB 32GB DDR5-6000', price: 329, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6000, cl: 30, voltage: 1.35, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-331-923-02.jpg', spec: '2×16GB · 6000MT/s · CL30 · RGB' },
+    { id: 'ram-ddr5-32-6400-dom', name: 'Corsair Dominator Platinum RGB 32GB DDR5-6400', price: 439, mem: 'DDR5', size: 32, modules: '2 × 16GB', speed: 6400, cl: 32, voltage: 1.40, shortage: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-236-946-02.png', spec: '2×16GB · 6400MT/s · CL32 · premium RGB' },
+    { id: 'ram-ddr4-16-3600', name: 'Corsair Vengeance LPX 16GB DDR4',        price: 119,  mem: 'DDR4', size: 16, modules: '2 × 8GB',  speed: 3600, cl: 18, voltage: 1.35, shortage: true, legacy: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-233-859-V03.jpg', spec: '2×8GB · 3600MT/s · CL18 · legacy AM4/LGA1700' },
+    { id: 'ram-ddr4-32-3600', name: 'G.Skill Ripjaws V 32GB DDR4-3600',       price: 209, mem: 'DDR4', size: 32, modules: '2 × 16GB', speed: 3600, cl: 16, voltage: 1.35, shortage: true, legacy: true, img: 'https://c1.neweggimages.com/productimage/nb640/20-232-907-03.jpg', spec: '2×16GB · 3600MT/s · CL16 · legacy' },
   ],
 
   /* ----------------------------------------------------------- GPUs ---- */
@@ -171,36 +172,36 @@ const PARTS = {
     { id: 'case-h210i',  name: 'NZXT H210i (ITX)',          price: 109, form: 'Mini-ITX',  gpu_max: 325, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 240mm (front)', img: 'https://c1.neweggimages.com/productimage/nb640/11-146-314-V80.jpg', spec: 'Mini-ITX · takes an ATX PSU · clean' },
 
     /* ---- ATX mid-towers ---- */
-    { id: 'case-5000d',      name: 'Corsair 5000D Airflow',        price: 149, form: 'ATX', gpu_max: 400, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · high airflow · very roomy' },
-    { id: 'case-4000x',      name: 'Corsair iCUE 4000X RGB',       price: 119, form: 'ATX', gpu_max: 360, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            spec: 'ATX · RGB · tempered glass' },
-    { id: 'case-lancool216', name: 'Lian Li Lancool 216',          price: 109, form: 'ATX', gpu_max: 392, cooler_max: 176, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · dual 160mm intake · airflow' },
-    { id: 'case-lancool3',   name: 'Lian Li Lancool III',          price: 159, form: 'ATX', gpu_max: 435, cooler_max: 187, psu_form: 'ATX', radiator: 'Up to 420mm (front/top)',        spec: 'ATX · huge · dual 420mm radiator' },
-    { id: 'case-o11vision',  name: 'Lian Li O11 Vision',           price: 179, form: 'ATX', gpu_max: 452, cooler_max: 167, psu_form: 'ATX', radiator: 'Up to 360mm (top/side/bottom)',   spec: 'ATX · three-sided seamless glass' },
-    { id: 'case-o11mini',    name: 'Lian Li O11 Dynamic Mini',     price: 129, form: 'ATX', gpu_max: 362, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         spec: 'ATX · compact dual-chamber' },
-    { id: 'case-h7flow',     name: 'NZXT H7 Flow',                 price: 129, form: 'ATX', gpu_max: 400, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · perforated panels · airflow' },
-    { id: 'case-h9flow',     name: 'NZXT H9 Flow',                 price: 159, form: 'ATX', gpu_max: 435, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (top/side)',         spec: 'ATX · dual-chamber · panoramic glass' },
-    { id: 'case-torrent',    name: 'Fractal Torrent',              price: 199, form: 'ATX', gpu_max: 461, cooler_max: 188, psu_form: 'ATX', radiator: 'Up to 420mm (front/bottom)',     spec: 'ATX · max airflow · dual 180mm' },
-    { id: 'case-pb500dx',    name: 'be quiet! Pure Base 500DX',    price: 99,  form: 'ATX', gpu_max: 369, cooler_max: 190, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            spec: 'ATX · quiet · tall cooler clearance' },
-    { id: 'case-g360a',      name: 'Phanteks Eclipse G360A',       price: 99,  form: 'ATX', gpu_max: 400, cooler_max: 162, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · mesh · 3 ARGB fans' },
-    { id: 'case-td500',      name: 'Cooler Master TD500 Mesh V2',  price: 99,  form: 'ATX', gpu_max: 410, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            spec: 'ATX · mesh · crystalline front' },
-    { id: 'case-y60',        name: 'HYTE Y60',                     price: 199, form: 'ATX', gpu_max: 375, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         spec: 'ATX · panoramic · vertical GPU' },
-    { id: 'case-gt502',      name: 'ASUS TUF Gaming GT502',        price: 159, form: 'ATX', gpu_max: 400, cooler_max: 162, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         spec: 'ATX · dual-chamber showcase' },
-    { id: 'case-skytwo',     name: 'Montech Sky Two',              price: 89,  form: 'ATX', gpu_max: 380, cooler_max: 175, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        spec: 'ATX · value · 4 fans included' },
+    { id: 'case-5000d',      name: 'Corsair 5000D Airflow',        price: 149, form: 'ATX', gpu_max: 400, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        img: 'https://www.bhphotovideo.com/images/fb/corsair_cc_9011210_ww_5000d_airflow_tempered_glass_1723203.jpg', spec: 'ATX · high airflow · very roomy' },
+    { id: 'case-4000x',      name: 'Corsair iCUE 4000X RGB',       price: 119, form: 'ATX', gpu_max: 360, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            img: 'https://c1.neweggimages.com/productimage/nb640/A1K6S2410190K1NG832.jpg', spec: 'ATX · RGB · tempered glass' },
+    { id: 'case-lancool216', name: 'Lian Li Lancool 216',          price: 109, form: 'ATX', gpu_max: 392, cooler_max: 176, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        img: 'https://c1.neweggimages.com/productimage/nb640/AFSTS2211290K0K668D.jpg', spec: 'ATX · dual 160mm intake · airflow' },
+    { id: 'case-lancool3',   name: 'Lian Li Lancool III',          price: 159, form: 'ATX', gpu_max: 435, cooler_max: 187, psu_form: 'ATX', radiator: 'Up to 420mm (front/top)',        img: 'https://c1.neweggimages.com/productimage/nb640/AFSTS220706fXCst.jpg', spec: 'ATX · huge · dual 420mm radiator' },
+    { id: 'case-o11vision',  name: 'Lian Li O11 Vision',           price: 179, form: 'ATX', gpu_max: 452, cooler_max: 167, psu_form: 'ATX', radiator: 'Up to 360mm (top/side/bottom)',   img: 'https://c1.neweggimages.com/productimage/nb640/mh2h_1136019b-a90b-4892-ad08-87cb368e1f2c.jpg', spec: 'ATX · three-sided seamless glass' },
+    { id: 'case-o11mini',    name: 'Lian Li O11 Dynamic Mini',     price: 129, form: 'ATX', gpu_max: 362, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         img: 'https://c1.neweggimages.com/productimage/nb640/AFSTS2508070L1NER7F.jpg', spec: 'ATX · compact dual-chamber' },
+    { id: 'case-h7flow',     name: 'NZXT H7 Flow',                 price: 129, form: 'ATX', gpu_max: 400, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        img: 'https://c1.neweggimages.com/productimage/nb640/11-146-361-04.jpg', spec: 'ATX · perforated panels · airflow' },
+    { id: 'case-h9flow',     name: 'NZXT H9 Flow',                 price: 159, form: 'ATX', gpu_max: 435, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (top/side)',         img: 'https://c1.neweggimages.com/productimage/nb640/11-146-370-11.jpg', spec: 'ATX · dual-chamber · panoramic glass' },
+    { id: 'case-torrent',    name: 'Fractal Torrent',              price: 199, form: 'ATX', gpu_max: 461, cooler_max: 188, psu_form: 'ATX', radiator: 'Up to 420mm (front/bottom)',     img: 'https://c1.neweggimages.com/productimage/nb640/11-352-143-01.jpg', spec: 'ATX · max airflow · dual 180mm' },
+    { id: 'case-pb500dx',    name: 'be quiet! Pure Base 500DX',    price: 99,  form: 'ATX', gpu_max: 369, cooler_max: 190, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            img: 'https://c1.neweggimages.com/productimage/nb640/2AM-0037-00071-01.jpg', spec: 'ATX · quiet · tall cooler clearance' },
+    { id: 'case-g360a',      name: 'Phanteks Eclipse G360A',       price: 99,  form: 'ATX', gpu_max: 400, cooler_max: 162, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        img: 'https://www.gigaparts.com/media/catalog/product/cache/5a6165e5f2c5c330866b923e356bed71/g/3/g360a_black_01.jpg', spec: 'ATX · mesh · 3 ARGB fans' },
+    { id: 'case-td500',      name: 'Cooler Master TD500 Mesh V2',  price: 99,  form: 'ATX', gpu_max: 410, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (front)',            img: 'https://c1.neweggimages.com/productimage/nb640/11-119-442-01.png', spec: 'ATX · mesh · crystalline front' },
+    { id: 'case-y60',        name: 'HYTE Y60',                     price: 199, form: 'ATX', gpu_max: 375, cooler_max: 165, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         img: 'https://c1.neweggimages.com/productimage/nb640/11-737-002-16.jpg', spec: 'ATX · panoramic · vertical GPU' },
+    { id: 'case-gt502',      name: 'ASUS TUF Gaming GT502',        price: 159, form: 'ATX', gpu_max: 400, cooler_max: 162, psu_form: 'ATX', radiator: 'Up to 360mm (side/top)',         img: 'https://www.bhphotovideo.com/images/fb/asus_gt502_blk_tg_tuf_gaming_gt502_atx_1743293.jpg', spec: 'ATX · dual-chamber showcase' },
+    { id: 'case-skytwo',     name: 'Montech Sky Two',              price: 89,  form: 'ATX', gpu_max: 380, cooler_max: 175, psu_form: 'ATX', radiator: 'Up to 360mm (front/top)',        img: 'https://c1.neweggimages.com/productimage/nb640/AK91S23062908J5FI5B.jpg', spec: 'ATX · value · 4 fans included' },
 
     /* ---- Full towers ---- */
-    { id: 'case-define7',    name: 'Fractal Define 7',             price: 179, form: 'ATX', gpu_max: 467, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 420mm (front)',            spec: 'Full tower · silent · sound-damped' },
-    { id: 'case-haf700',     name: 'Cooler Master HAF 700',        price: 269, form: 'ATX', gpu_max: 490, cooler_max: 166, psu_form: 'ATX', radiator: 'Up to 420mm (front)',            spec: 'Full tower · monster airflow' },
-    { id: 'case-nv7',        name: 'Phanteks NV7',                 price: 209, form: 'ATX', gpu_max: 503, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 480mm',                    spec: 'Full tower · showcase · massive' },
+    { id: 'case-define7',    name: 'Fractal Define 7',             price: 179, form: 'ATX', gpu_max: 467, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 420mm (front)',            img: 'https://c1.neweggimages.com/productimage/nb640/11-352-111-V21.jpg', spec: 'Full tower · silent · sound-damped' },
+    { id: 'case-haf700',     name: 'Cooler Master HAF 700',        price: 269, form: 'ATX', gpu_max: 490, cooler_max: 166, psu_form: 'ATX', radiator: 'Up to 420mm (front)',            img: 'https://c1.neweggimages.com/productimage/nb640/11-119-437-V01.jpg', spec: 'Full tower · monster airflow' },
+    { id: 'case-nv7',        name: 'Phanteks NV7',                 price: 209, form: 'ATX', gpu_max: 503, cooler_max: 185, psu_form: 'ATX', radiator: 'Up to 480mm',                    img: 'https://c1.neweggimages.com/productimage/nb640/11-854-122-01.jpg', spec: 'Full tower · showcase · massive' },
 
     /* ---- Micro-ATX ---- */
-    { id: 'case-ap201',      name: 'ASUS Prime AP201',             price: 89,  form: 'Micro-ATX', gpu_max: 338, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (side)',       spec: 'Micro-ATX · compact mesh' },
-    { id: 'case-q300l',      name: 'Cooler Master Q300L',          price: 49,  form: 'Micro-ATX', gpu_max: 360, cooler_max: 159, psu_form: 'ATX', radiator: 'Up to 240mm (top)',        spec: 'Micro-ATX · budget · tiny' },
+    { id: 'case-ap201',      name: 'ASUS Prime AP201',             price: 89,  form: 'Micro-ATX', gpu_max: 338, cooler_max: 170, psu_form: 'ATX', radiator: 'Up to 360mm (side)',       img: 'https://c1.neweggimages.com/productimage/nb640/A4RES22061007RXFU34.jpg', spec: 'Micro-ATX · compact mesh' },
+    { id: 'case-q300l',      name: 'Cooler Master Q300L',          price: 49,  form: 'Micro-ATX', gpu_max: 360, cooler_max: 159, psu_form: 'ATX', radiator: 'Up to 240mm (top)',        img: 'https://c1.neweggimages.com/productimage/nb640/11-119-444-01.png', spec: 'Micro-ATX · budget · tiny' },
 
     /* ---- Mini-ITX / SFF ---- */
-    { id: 'case-nr200p',     name: 'Cooler Master NR200P',         price: 99,  form: 'Mini-ITX', gpu_max: 330, cooler_max: 155, psu_form: 'SFX', radiator: 'Up to 280mm (side)',        spec: 'Mini-ITX · SFF classic · air or AIO' },
-    { id: 'case-q58',        name: 'Lian Li Q58',                  price: 139, form: 'Mini-ITX', gpu_max: 320, cooler_max: 67,  psu_form: 'SFX', radiator: 'Up to 280mm (side)',        spec: 'Mini-ITX · 14.6L · PCIe riser' },
-    { id: 'case-meshlicious',name: 'SSUPD Meshlicious',            price: 129, form: 'Mini-ITX', gpu_max: 336, cooler_max: 73,  psu_form: 'SFX', radiator: 'Up to 280mm (side)',        spec: 'Mini-ITX · full-mesh SFF' },
-    { id: 'case-terra',      name: 'Fractal Terra',                price: 169, form: 'Mini-ITX', gpu_max: 322, cooler_max: 77,  psu_form: 'SFX', radiator: 'Air-cooled (10.4L)',         spec: 'Mini-ITX · wood front · pocket SFF' },
+    { id: 'case-nr200p',     name: 'Cooler Master NR200P',         price: 99,  form: 'Mini-ITX', gpu_max: 330, cooler_max: 155, psu_form: 'SFX', radiator: 'Up to 280mm (side)',        img: 'https://c1.neweggimages.com/productimage/nb640/11-119-450-24.png', spec: 'Mini-ITX · SFF classic · air or AIO' },
+    { id: 'case-q58',        name: 'Lian Li Q58',                  price: 139, form: 'Mini-ITX', gpu_max: 320, cooler_max: 67,  psu_form: 'SFX', radiator: 'Up to 280mm (side)',        img: 'https://c1.neweggimages.com/productimage/nb640/AFSTS210831xpfgx.jpg', spec: 'Mini-ITX · 14.6L · PCIe riser' },
+    { id: 'case-meshlicious',name: 'SSUPD Meshlicious',            price: 129, form: 'Mini-ITX', gpu_max: 336, cooler_max: 73,  psu_form: 'SFX', radiator: 'Up to 280mm (side)',        img: 'https://ssupd.co/cdn/shop/products/oe759_B_Black.285.png', spec: 'Mini-ITX · full-mesh SFF' },
+    { id: 'case-terra',      name: 'Fractal Terra',                price: 169, form: 'Mini-ITX', gpu_max: 322, cooler_max: 77,  psu_form: 'SFX', radiator: 'Air-cooled (10.4L)',         img: 'https://c1.neweggimages.com/productimage/nb640/11-352-212-21.jpg', spec: 'Mini-ITX · wood front · pocket SFF' },
   ],
 
   /* -------------------------------------------------------- Coolers ---- */
@@ -242,4 +243,171 @@ const PRESETS = [
   },
 ];
 
-if (typeof module !== 'undefined') module.exports = { CATEGORIES, PARTS, PRESETS, SOCKET_MEM };
+/* Multi-angle image galleries for the store-style case detail page (keyed by case id). */
+const CASE_GALLERIES = {
+  'case-meshify': [
+    'https://c1.neweggimages.com/productimage/nb640/11-352-140-V07.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-140-V03.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-140-V11.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-140-V80.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-140-V12.jpg',
+  ],
+  'case-5000d': [
+    'https://www.bhphotovideo.com/images/fb/corsair_cc_9011210_ww_5000d_airflow_tempered_glass_1723203.jpg',
+    'https://assets.corsair.com/image/upload/c_scale%2Cq_auto/products/Cases/base-5000d-airflow/Gallery/5000D_AF_BLACK_001.webp',
+  ],
+  'case-4000x': [
+    'https://c1.neweggimages.com/productimage/nb640/A1K6S2410190K1NG832.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A1K6S2410190K1N0799.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A1K6S2410190K1MY79A.jpg',
+  ],
+  'case-lancool216': [
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2211290K0K668D.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2406282bu4T.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS240628QTtCR.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS240628S1Ppr.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2406281NmWa.jpg',
+  ],
+  'case-lancool3': [
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS220706fXCst.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS220706D62Ke.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2207063Lh4v.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS220706mmodM.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS220706UYA9e.jpg',
+  ],
+  'case-o11vision': [
+    'https://c1.neweggimages.com/productimage/nb640/mh2h_1136019b-a90b-4892-ad08-87cb368e1f2c.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS231105dvTmF.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS231105jhcAQ.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS231105GqS8x.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS231105thUVM.jpg',
+  ],
+  'case-o11mini': [
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2508070L1NER7F.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2508070KZC76EC.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2507140L7GAN92.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2507140L7IOCBA.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS2507140L7KJZB0.jpg',
+  ],
+  'case-h7flow': [
+    'https://c1.neweggimages.com/productimage/nb640/11-146-361-04.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-361-01.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-361-06.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-361-11.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-361-03.jpg',
+  ],
+  'case-h9flow': [
+    'https://c1.neweggimages.com/productimage/nb640/11-146-370-11.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-370-01.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-370-10.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-370-03.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-146-370-04.jpg',
+  ],
+  'case-torrent': [
+    'https://c1.neweggimages.com/productimage/nb640/11-352-143-01.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-143-V80.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-143-02.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-143-19.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-143-V82.jpg',
+  ],
+  'case-pb500dx': [
+    'https://c1.neweggimages.com/productimage/nb640/2AM-0037-00071-01.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A68VS200420D3smt.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A68VS2004205UJID.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A68VS200420gtEAt.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A68VS200420sRES6.jpg',
+  ],
+  'case-g360a': [
+    'https://www.gigaparts.com/media/catalog/product/cache/5a6165e5f2c5c330866b923e356bed71/g/3/g360a_black_01.jpg',
+  ],
+  'case-td500': [
+    'https://c1.neweggimages.com/productimage/nb640/11-119-442-01.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-442-02.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-442-03.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-442-04.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-442-05.png',
+  ],
+  'case-y60': [
+    'https://c1.neweggimages.com/productimage/nb640/11-737-002-16.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-737-002-17.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-737-002-13.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-737-002-14.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-737-002-11.jpg',
+  ],
+  'case-gt502': [
+    'https://www.bhphotovideo.com/images/fb/asus_gt502_blk_tg_tuf_gaming_gt502_atx_1743293.jpg',
+    'https://productimages.microcenter.com/0662252_532390.jpg',
+  ],
+  'case-skytwo': [
+    'https://c1.neweggimages.com/productimage/nb640/AK91S23062908J5FI5B.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AK91S230222087AZJB7.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AK91S230222086X0VCA.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AK91S230222086T9531.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AK91S23022305JXQ67E.jpg',
+  ],
+  'case-define7': [
+    'https://c1.neweggimages.com/productimage/nb640/11-352-111-V21.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-111-V18.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-111-V83.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-111-V29.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-111-V24.jpg',
+  ],
+  'case-haf700': [
+    'https://c1.neweggimages.com/productimage/nb640/11-119-437-V01.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-437-V02.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-437-V03.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-437-V04.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-437-V05.jpg',
+  ],
+  'case-nv7': [
+    'https://c1.neweggimages.com/productimage/nb640/11-854-122-01.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-854-122-02.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-854-122-03.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-854-122-04.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-854-122-05.jpg',
+  ],
+  'case-ap201': [
+    'https://c1.neweggimages.com/productimage/nb640/A4RES22061007RXFU34.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A4RES22061007RX3F03.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A4RES22061007RXB3B4.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A4RES22061007RV0C04.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/A4RES22061007RXAF3B.jpg',
+  ],
+  'case-q300l': [
+    'https://c1.neweggimages.com/productimage/nb640/11-119-444-01.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-444-02.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-444-03.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-444-04.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-444-05.png',
+  ],
+  'case-nr200p': [
+    'https://c1.neweggimages.com/productimage/nb640/11-119-450-24.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-450-33.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-450-34.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-450-35.png',
+    'https://c1.neweggimages.com/productimage/nb640/11-119-450-36.png',
+  ],
+  'case-q58': [
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS210831xpfgx.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS210831i7HGi.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS210831XQih6.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS210831RSLPX.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/AFSTS210831oDO00.jpg',
+  ],
+  'case-meshlicious': [
+    'https://ssupd.co/cdn/shop/products/oe759_B_Black.285.png',
+    'https://ssupd.co/cdn/shop/products/SSU-MESHLI-BK-FM-PCIE4-14-90D-6.png',
+    'https://ssupd.co/cdn/shop/products/SSU-MESHLI-BK-FM-PCIE4-14-90D-1.png',
+    'https://ssupd.co/cdn/shop/products/SSU-MESHLI-BK-FM-PCIE4-14-90D-2.png',
+    'https://ssupd.co/cdn/shop/products/SSU-MESHLI-BK-FM-PCIE4-14-90D-4.png',
+  ],
+  'case-terra': [
+    'https://c1.neweggimages.com/productimage/nb640/11-352-212-21.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-212-22.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-212-23.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-212-24.jpg',
+    'https://c1.neweggimages.com/productimage/nb640/11-352-212-25.jpg',
+  ],
+};
+
+if (typeof module !== 'undefined') module.exports = { CATEGORIES, PARTS, PRESETS, SOCKET_MEM, CASE_GALLERIES };

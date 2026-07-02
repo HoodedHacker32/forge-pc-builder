@@ -1,0 +1,268 @@
+FORGE — Case catalog (33 cases)
+Generated from js/data.js
+============================================================
+
+Lian Li O11 Dynamic EVO  —  €159
+    Form factor : ATX
+    Max GPU     : 422 mm
+    Max cooler  : 167 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (top/side/bottom)
+    Note        : ATX · dual-chamber · glass showcase
+
+Corsair 4000D Airflow  —  €99
+    Form factor : ATX
+    Max GPU     : 360 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · superb airflow · value
+
+Fractal Pop Air  —  €89
+    Form factor : ATX
+    Max GPU     : 405 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · mesh front · colourful
+
+Fractal North  —  €139
+    Form factor : ATX
+    Max GPU     : 355 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · walnut + mesh · gorgeous
+
+Fractal Meshify 2 Compact  —  €119
+    Form factor : ATX
+    Max GPU     : 360 mm
+    Max cooler  : 169 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · compact tower
+
+NZXT H510 Flow (mATX)  —  €79
+    Form factor : Micro-ATX
+    Max GPU     : 360 mm
+    Max cooler  : 165 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 280mm (front)
+    Note        : Micro-ATX · clean build
+
+Lian Li A4-H2O (ITX)  —  €129
+    Form factor : Mini-ITX
+    Max GPU     : 322 mm
+    Max cooler  : 70 mm (air height)
+    PSU         : SFX
+    Radiator    : Up to 240mm (side)
+    Note        : Mini-ITX · tiny · SFX PSU only
+
+NR200P MAX (ITX)  —  €149
+    Form factor : Mini-ITX
+    Max GPU     : 336 mm
+    Max cooler  : 67 mm (air height)
+    PSU         : SFX
+    Radiator    : 280mm AIO included
+    Note        : Mini-ITX · AIO included class
+
+NZXT H210i (ITX)  —  €109
+    Form factor : Mini-ITX
+    Max GPU     : 325 mm
+    Max cooler  : 165 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 240mm (front)
+    Note        : Mini-ITX · takes an ATX PSU · clean
+
+Corsair 5000D Airflow  —  €149
+    Form factor : ATX
+    Max GPU     : 400 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front/top)
+    Note        : ATX · high airflow · very roomy
+
+Corsair iCUE 4000X RGB  —  €119
+    Form factor : ATX
+    Max GPU     : 360 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · RGB · tempered glass
+
+Lian Li Lancool 216  —  €109
+    Form factor : ATX
+    Max GPU     : 392 mm
+    Max cooler  : 176 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front/top)
+    Note        : ATX · dual 160mm intake · airflow
+
+Lian Li Lancool III  —  €159
+    Form factor : ATX
+    Max GPU     : 435 mm
+    Max cooler  : 187 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 420mm (front/top)
+    Note        : ATX · huge · dual 420mm radiator
+
+Lian Li O11 Vision  —  €179
+    Form factor : ATX
+    Max GPU     : 452 mm
+    Max cooler  : 167 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (top/side/bottom)
+    Note        : ATX · three-sided seamless glass
+
+Lian Li O11 Dynamic Mini  —  €129
+    Form factor : ATX
+    Max GPU     : 362 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (side/top)
+    Note        : ATX · compact dual-chamber
+
+NZXT H7 Flow  —  €129
+    Form factor : ATX
+    Max GPU     : 400 mm
+    Max cooler  : 185 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front/top)
+    Note        : ATX · perforated panels · airflow
+
+NZXT H9 Flow  —  €159
+    Form factor : ATX
+    Max GPU     : 435 mm
+    Max cooler  : 165 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (top/side)
+    Note        : ATX · dual-chamber · panoramic glass
+
+Fractal Torrent  —  €199
+    Form factor : ATX
+    Max GPU     : 461 mm
+    Max cooler  : 188 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 420mm (front/bottom)
+    Note        : ATX · max airflow · dual 180mm
+
+be quiet! Pure Base 500DX  —  €99
+    Form factor : ATX
+    Max GPU     : 369 mm
+    Max cooler  : 190 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · quiet · tall cooler clearance
+
+Phanteks Eclipse G360A  —  €99
+    Form factor : ATX
+    Max GPU     : 400 mm
+    Max cooler  : 162 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front/top)
+    Note        : ATX · mesh · 3 ARGB fans
+
+Cooler Master TD500 Mesh V2  —  €99
+    Form factor : ATX
+    Max GPU     : 410 mm
+    Max cooler  : 165 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front)
+    Note        : ATX · mesh · crystalline front
+
+HYTE Y60  —  €199
+    Form factor : ATX
+    Max GPU     : 375 mm
+    Max cooler  : 165 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (side/top)
+    Note        : ATX · panoramic · vertical GPU
+
+ASUS TUF Gaming GT502  —  €159
+    Form factor : ATX
+    Max GPU     : 400 mm
+    Max cooler  : 162 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (side/top)
+    Note        : ATX · dual-chamber showcase
+
+Montech Sky Two  —  €89
+    Form factor : ATX
+    Max GPU     : 380 mm
+    Max cooler  : 175 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (front/top)
+    Note        : ATX · value · 4 fans included
+
+Fractal Define 7  —  €179
+    Form factor : ATX
+    Max GPU     : 467 mm
+    Max cooler  : 185 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 420mm (front)
+    Note        : Full tower · silent · sound-damped
+
+Cooler Master HAF 700  —  €269
+    Form factor : ATX
+    Max GPU     : 490 mm
+    Max cooler  : 166 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 420mm (front)
+    Note        : Full tower · monster airflow
+
+Phanteks NV7  —  €209
+    Form factor : ATX
+    Max GPU     : 503 mm
+    Max cooler  : 185 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 480mm
+    Note        : Full tower · showcase · massive
+
+ASUS Prime AP201  —  €89
+    Form factor : Micro-ATX
+    Max GPU     : 338 mm
+    Max cooler  : 170 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 360mm (side)
+    Note        : Micro-ATX · compact mesh
+
+Cooler Master Q300L  —  €49
+    Form factor : Micro-ATX
+    Max GPU     : 360 mm
+    Max cooler  : 159 mm (air height)
+    PSU         : ATX
+    Radiator    : Up to 240mm (top)
+    Note        : Micro-ATX · budget · tiny
+
+Cooler Master NR200P  —  €99
+    Form factor : Mini-ITX
+    Max GPU     : 330 mm
+    Max cooler  : 155 mm (air height)
+    PSU         : SFX
+    Radiator    : Up to 280mm (side)
+    Note        : Mini-ITX · SFF classic · air or AIO
+
+Lian Li Q58  —  €139
+    Form factor : Mini-ITX
+    Max GPU     : 320 mm
+    Max cooler  : 67 mm (air height)
+    PSU         : SFX
+    Radiator    : Up to 280mm (side)
+    Note        : Mini-ITX · 14.6L · PCIe riser
+
+SSUPD Meshlicious  —  €129
+    Form factor : Mini-ITX
+    Max GPU     : 336 mm
+    Max cooler  : 73 mm (air height)
+    PSU         : SFX
+    Radiator    : Up to 280mm (side)
+    Note        : Mini-ITX · full-mesh SFF
+
+Fractal Terra  —  €169
+    Form factor : Mini-ITX
+    Max GPU     : 322 mm
+    Max cooler  : 77 mm (air height)
+    PSU         : SFX
+    Radiator    : Air-cooled (10.4L)
+    Note        : Mini-ITX · wood front · pocket SFF
+

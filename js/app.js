@@ -554,6 +554,22 @@
         <span><strong>Previous-generation part.</strong> Still sold, but stock is thinning and prices can swing — current-gen equivalents may offer better value or efficiency. Worth a quick price check before buying.</span>
       </div>` : '';
 
+    // Store-style gallery: cases carry multiple product angles (CASE_GALLERIES).
+    const gallery = (typeof CASE_GALLERIES !== 'undefined' && CASE_GALLERIES[part.id]) || null;
+    const badges = `${part.shortage ? '<span class="shortage-tag">⚠ Shortage</span>' : ''}${legacyTag(part)}`;
+    const mediaCol = (gallery && gallery.length > 1)
+      ? `<div class="detail-gallery">
+           <div class="detail-media has-photo gallery-main" id="galleryMain" role="button" tabindex="0" aria-label="View image full size">
+             ${badges}
+             <img class="part-photo" id="galleryMainImg" src="${esc(gallery[0])}" alt="${esc(part.name)}" />
+             <span class="gallery-zoom" aria-hidden="true">⤢ View full</span>
+           </div>
+           <div class="gallery-thumbs" id="galleryThumbs">
+             ${gallery.map((u, i) => `<button class="gallery-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}" type="button" aria-label="View angle ${i + 1}"><img src="${esc(u)}" alt="" loading="lazy" /></button>`).join('')}
+           </div>
+         </div>`
+      : `<div class="detail-media ${part.img ? 'has-photo' : ''}">${badges}${partThumb(cat, part)}</div>`;
+
     el.partDetail.innerHTML = `
       <div class="detail-inner">
         <div class="detail-bar">
@@ -564,11 +580,7 @@
           <span class="detail-cat">${category.name}</span>
         </div>
         <div class="detail-grid">
-          <div class="detail-media ${part.img ? 'has-photo' : ''}">
-            ${part.shortage ? '<span class="shortage-tag">⚠ Shortage</span>' : ''}
-            ${legacyTag(part)}
-            ${partThumb(cat, part)}
-          </div>
+          ${mediaCol}
           <div class="detail-info">
             <h2>${part.name}</h2>
             <p class="detail-spec">${part.spec || ''}</p>
@@ -603,6 +615,70 @@
       renderDetail(id); // refresh the button state
       toast(build[cat] && build[cat].id === part.id ? `${part.name} added.` : `${part.name} removed.`);
     });
+
+    // Gallery: thumbnail selection + click-to-zoom lightbox
+    if (gallery && gallery.length > 1) {
+      const mainImg = $('galleryMainImg');
+      const thumbs = $('galleryThumbs');
+      let cur = 0;
+      const select = (i) => {
+        cur = (i + gallery.length) % gallery.length;
+        mainImg.src = gallery[cur];
+        thumbs.querySelectorAll('.gallery-thumb').forEach((b, bi) => b.classList.toggle('active', bi === cur));
+        const active = thumbs.querySelector('.gallery-thumb.active');
+        if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      };
+      thumbs.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-idx]');
+        if (b) select(+b.dataset.idx);
+      });
+      const openLb = () => openLightbox(gallery, cur, select);
+      $('galleryMain').addEventListener('click', openLb);
+      $('galleryMain').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(); } });
+    }
+  }
+
+  /* Full-screen lightbox for the case galleries — arrows / swipe to browse, Esc to close. */
+  function openLightbox(images, startIdx, onChange) {
+    let cur = startIdx || 0;
+    let lb = document.getElementById('lightbox');
+    if (!lb) {
+      lb = document.createElement('div');
+      lb.id = 'lightbox';
+      lb.className = 'lightbox';
+      lb.innerHTML = `
+        <button class="lb-close" type="button" aria-label="Close">✕</button>
+        <button class="lb-nav lb-prev" type="button" aria-label="Previous">‹</button>
+        <img class="lb-img" alt="" />
+        <button class="lb-nav lb-next" type="button" aria-label="Next">›</button>
+        <span class="lb-count"></span>`;
+      document.body.appendChild(lb);
+    }
+    const img = lb.querySelector('.lb-img');
+    const count = lb.querySelector('.lb-count');
+    const show = (i) => {
+      cur = (i + images.length) % images.length;
+      img.src = images[cur];
+      count.textContent = `${cur + 1} / ${images.length}`;
+      if (onChange) onChange(cur);
+    };
+    const close = () => {
+      lb.classList.remove('open');
+      document.body.classList.remove('lightbox-open');
+      document.removeEventListener('keydown', onKey, true);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); close(); }
+      else if (e.key === 'ArrowLeft') show(cur - 1);
+      else if (e.key === 'ArrowRight') show(cur + 1);
+    };
+    lb.onclick = (e) => { if (e.target === lb || e.target.classList.contains('lb-close')) close(); };
+    lb.querySelector('.lb-prev').onclick = (e) => { e.stopPropagation(); show(cur - 1); };
+    lb.querySelector('.lb-next').onclick = (e) => { e.stopPropagation(); show(cur + 1); };
+    document.addEventListener('keydown', onKey, true);
+    show(cur);
+    lb.classList.add('open');
+    document.body.classList.add('lightbox-open');
   }
 
   function closeDetail() {

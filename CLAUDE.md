@@ -330,6 +330,23 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
     cooler↔RAM height clearance, USB-C/front-panel headers, M.2↔SATA lane sharing, mobo max
     memory capacity. GPU transient spikes are already absorbed by `recommendedPsu`'s 1.5×
     headroom; case fans/board sit in the fixed +70W overhead. Assets bumped `v=17`.
+- **2026-07-02 — 24 more cases (`v=18`):** owner "need way more cases." Added 24 real current
+  cases (ATX mid/full towers, Micro-ATX, Mini-ITX/SFF) with accurate `form`/`gpu_max`/
+  `cooler_max`/`psu_form`/`radiator` — catalog now 138 parts. New cases weren't in the image
+  sheet yet, so they started on line-art.
+- **2026-07-02 — store-style case galleries + DDR5 reprice (`v=19`):** owner supplied
+  `cases_product_images.xlsx` (multi-angle shots, mostly 5 per case) and wanted "a full store-
+  like page … look at every case in full." Added **`CASE_GALLERIES`** (id → [urls]) to `data.js`
+  (exported), set each new case's card `img` to its first shot, and built a gallery on the case
+  detail page: a big main image + a horizontal thumbnail strip (`renderDetail` swaps
+  `#galleryMainImg`), plus a **click-to-zoom lightbox** (`openLightbox()` — prev/next, counter,
+  Esc-to-close via a capture-phase keydown so it closes the lightbox *before* the detail's Esc
+  handler). CSS: `.detail-gallery`/`.gallery-thumb`/`.lightbox` (z-index 90, above the detail's
+  70). Gated on `cat === 'case' && CASE_GALLERIES[id]` so other categories are unchanged.
+  Also **repriced RAM** — owner: DDR5 estimates were "way off." The catalog's DRAM-shortage
+  premise means prices should be well above normal; raised DDR5 ~1.6–1.8× (32GB DDR5-6000
+  €199 → €359, 96GB → €1049) and DDR4 up too, and updated the shortage note (~2.5–3.5× 2024
+  lows). Other categories' prices were left as-is pending specifics from the owner.
 
 ## Repo & deployment
 
