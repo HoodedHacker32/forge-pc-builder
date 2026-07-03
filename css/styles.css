@@ -325,7 +325,10 @@ body.detail-open { overflow: hidden; }
 .detail-foot-note { font-size: 12px; color: var(--warn); margin-top: 16px; }
 
 /* ---- Real product photo (owner image set) + line-art fallback ---- */
-.part-photo { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* Absolutely-positioned so the image always fits its box via object-fit:contain — in a
+   `place-items:center` grid a percentage-height replaced element grows the track to its
+   intrinsic height and gets clipped by the fixed aspect-ratio box (only the top shows). */
+.part-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
 .art-fallback { display: none; width: 100%; height: 100%; }
 .part-media.photo-failed .art-fallback { display: grid; place-items: center; }
 /* White-background product shots sit on a light plate so they blend; line-art keeps the
@@ -338,6 +341,10 @@ body.detail-open { overflow: hidden; }
 /* ---- Case detail: store-style multi-angle gallery ---- */
 .detail-gallery { position: sticky; top: 70px; display: flex; flex-direction: column; gap: 10px; }
 .gallery-main { position: relative; cursor: zoom-in; }
+/* Product shots (esp. tall case photos) show in full — the main frame sizes to the image
+   (capped), rather than cropping it into a fixed 4:3 landscape box. */
+.gallery-main.detail-media { aspect-ratio: auto; overflow: visible; min-height: 220px; }
+.gallery-main .part-photo { position: static; width: 100%; height: auto; max-height: 60vh; }
 .gallery-zoom {
   position: absolute; bottom: 10px; right: 10px; display: inline-flex; align-items: center; gap: 5px;
   font-size: 11px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: #fff;
@@ -674,7 +681,8 @@ body.lightbox-open { overflow: hidden; }
   .detail-grid { grid-template-columns: 1fr; gap: 16px; }
   .detail-media { position: relative; top: 0; aspect-ratio: 16 / 10; max-height: 40vh; }
   .detail-gallery { position: static; }
-  .detail-gallery .detail-media { max-height: 46vh; aspect-ratio: 4 / 3; }
+  .detail-gallery .detail-media { max-height: none; aspect-ratio: auto; }
+  .gallery-main .part-photo { max-height: 52vh; }
   .lb-nav { width: 40px; height: 40px; }
   .detail-info h2 { font-size: 22px; }
   .detail-spec { font-size: 13.5px; }
