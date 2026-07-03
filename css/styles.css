@@ -339,12 +339,18 @@ body.detail-open { overflow: hidden; }
 .detail-media.has-photo .part-photo { padding: 22px; }
 
 /* ---- Case detail: store-style multi-angle gallery ---- */
-.detail-gallery { position: sticky; top: 70px; display: flex; flex-direction: column; gap: 10px; }
+/* Plain block flow (not flex) so the main image and the thumbnail strip always stack —
+   flex was mis-allocating the main's height and letting the image overlap the thumbs. */
+.detail-gallery { position: sticky; top: 70px; }
 .gallery-main { position: relative; cursor: zoom-in; }
-/* Product shots (esp. tall case photos) show in full — the main frame sizes to the image
-   (capped), rather than cropping it into a fixed 4:3 landscape box. */
-.gallery-main.detail-media { aspect-ratio: auto; overflow: visible; min-height: 220px; }
-.gallery-main .part-photo { position: static; width: 100%; height: auto; max-height: 60vh; }
+/* Product shots (esp. tall case photos) show in full — the main frame is a plain block
+   that sizes to the image (capped), rather than a fixed 4:3 grid box. `display:block`
+   (not the inherited grid) makes the box height equal the image height, so the thumbnail
+   strip below meets it exactly instead of overlapping it. */
+/* `top: 0` cancels the inherited `.detail-media { top: 70px }` sticky offset — otherwise
+   this position:relative box renders 70px lower than its flow slot and covers the thumbs. */
+.gallery-main.detail-media { display: block; aspect-ratio: auto; overflow: hidden; min-height: 0; top: 0; }
+.gallery-main .part-photo { position: static; display: block; width: 100%; height: auto; max-height: 60vh; }
 .gallery-zoom {
   position: absolute; bottom: 10px; right: 10px; display: inline-flex; align-items: center; gap: 5px;
   font-size: 11px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: #fff;
@@ -352,7 +358,7 @@ body.detail-open { overflow: hidden; }
   clip-path: var(--cut); opacity: 0; transition: opacity 0.15s;
 }
 .gallery-main:hover .gallery-zoom { opacity: 1; }
-.gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; margin-top: 10px; }
 .gallery-thumb {
   flex: 0 0 auto; width: 66px; height: 66px; padding: 4px; cursor: pointer;
   background: radial-gradient(120% 120% at 50% 12%, #fbfbfd, #ccccd4);
