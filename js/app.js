@@ -25,8 +25,6 @@
     healthPill: $('healthPill'), healthLabel: $('healthLabel'), slotProgress: $('slotProgress'),
     presetBtn: $('presetBtn'), resetBtn: $('resetBtn'), shareBtn: $('shareBtn'),
     presetModal: $('presetModal'), presetGrid: $('presetGrid'), presetClose: $('presetClose'),
-    shopBtn: $('shopBtn'), shopModal: $('shopModal'), shopList: $('shopList'),
-    shopClose: $('shopClose'), shopSub: $('shopSub'), shopFoot: $('shopFoot'),
     toast: $('toast'),
     buildPanel: $('buildPanel'), buildToggle: $('buildToggle'), slotCollapse: $('slotCollapse'),
     partDetail: $('partDetail'),
@@ -35,19 +33,6 @@
   };
 
   const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
-
-  /* Single Irish supplier for the "Shop this build" links — keeps delivery cheap and
-     consistent (one parcel, free nationwide delivery) rather than scattering the order
-     across shops. `search` deep-links into the retailer's search for that exact product.
-     To switch supplier, change only this object (e.g. paradigit.ie, pcsystems.ie). */
-  const RETAILER = {
-    name: 'Elara',
-    domain: 'elara.ie',
-    home: 'https://www.elara.ie',
-    note: 'Irish retailer · free nationwide delivery',
-    search: (q) => 'https://www.elara.ie/catalogsearch/result/?q=' + encodeURIComponent(q),
-  };
-  const retailerUrl = (part) => RETAILER.search(part.name);
   // Landscape tablet/laptop uses the horizontal build-tray layout (no collapse there).
   const isTrayLayout = () => window.matchMedia('(min-width: 901px) and (max-width: 1400px) and (orientation: landscape)').matches;
 
@@ -823,48 +808,6 @@
     setTimeout(() => { el.presetModal.hidden = true; }, 200);
   }
 
-  /* ---- Shop modal: visual build list + per-part buy links (Irish supplier) ---- */
-  function openShop() {
-    const slots = CATEGORIES.filter(c => build[c.id]);
-    const total = slots.reduce((s, c) => s + build[c.id].price, 0);
-    if (!slots.length) {
-      el.shopList.innerHTML = `<p class="shop-empty">Your build is empty — add some parts first, then come back to shop them all in one place.</p>`;
-      el.shopFoot.innerHTML = '';
-    } else {
-      el.shopList.innerHTML = slots.map(c => {
-        const p = build[c.id];
-        return `<div class="shop-row">
-          <div class="shop-thumb ${p.img ? 'has-photo' : ''}">${p.img ? `<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.remove()" />` : partArt(c.id, p)}</div>
-          <div class="shop-info">
-            <span class="shop-cat">${c.name}</span>
-            <span class="shop-name">${p.name}</span>
-            <span class="shop-spec">${p.spec || ''}</span>
-          </div>
-          <div class="shop-buy">
-            <span class="shop-price">€${fmtPrice(p.price)}</span>
-            <a class="shop-link" href="${retailerUrl(p)}" target="_blank" rel="noopener noreferrer">Find at ${RETAILER.name} ↗</a>
-          </div>
-        </div>`;
-      }).join('');
-      const missing = CATEGORIES.filter(c => c.essential && !build[c.id]);
-      el.shopFoot.innerHTML = `
-        <div class="shop-total-row">
-          <span>Estimated total (${slots.length} part${slots.length === 1 ? '' : 's'})</span>
-          <strong>€${fmtPrice(total)}</strong>
-        </div>
-        ${missing.length ? `<p class="shop-missing">Still needs: ${missing.map(m => m.name).join(', ')}.</p>` : ''}
-        <p class="shop-note">Prices are indicative — check the live price at ${RETAILER.name}. Buying everything from one Irish supplier keeps it to a single delivery with little to no shipping cost.</p>
-        <a class="primary-btn shop-open-all" href="${RETAILER.home}" target="_blank" rel="noopener noreferrer">Open ${RETAILER.domain} ↗</a>`;
-    }
-    el.shopSub.textContent = `${RETAILER.note}`;
-    el.shopModal.hidden = false;
-    requestAnimationFrame(() => el.shopModal.classList.add('open'));
-  }
-  function closeShop() {
-    el.shopModal.classList.remove('open');
-    setTimeout(() => { el.shopModal.hidden = true; }, 200);
-  }
-
   /* ====================================================== EVENTS ===== */
 
   // A missing element here (e.g. a stale service-worker cache serving an older
@@ -915,13 +858,9 @@
     const card = e.target.closest('[data-preset]');
     if (card) applyPreset(PRESETS.find(p => p.id === card.dataset.preset));
   });
-  on(el.shopBtn, 'click', openShop);
-  on(el.shopClose, 'click', closeShop);
-  on(el.shopModal, 'click', (e) => { if (e.target === el.shopModal) closeShop(); });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (el.shopModal && !el.shopModal.hidden) closeShop();
-    else if (el.presetModal && !el.presetModal.hidden) closePresets();
+    if (el.presetModal && !el.presetModal.hidden) closePresets();
     else if (el.partDetail && !el.partDetail.hidden) location.hash = '';
   });
 

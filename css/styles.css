@@ -373,41 +373,6 @@ body.detail-open { overflow: hidden; }
   color: var(--muted); font-family: var(--display); font-size: 13px; letter-spacing: 0.05em; }
 body.lightbox-open { overflow: hidden; }
 
-/* ---- Shop modal: visual build list with buy links ---- */
-.full-btn { width: 100%; text-align: center; }
-.shop-modal { display: flex; flex-direction: column; }
-.shop-sub { font-size: 12px; color: var(--muted); margin-top: 3px; letter-spacing: 0.02em; }
-.shop-modal .modal-head { margin-bottom: 14px; }
-.shop-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 0; }
-.shop-empty { color: var(--muted); text-align: center; padding: 30px 10px; }
-.shop-row {
-  display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 14px; align-items: center;
-  padding: 10px 12px; border: 1px solid var(--stroke); background: rgba(255, 255, 255, 0.02);
-}
-.shop-thumb { width: 60px; height: 60px; display: grid; place-items: center; overflow: hidden;
-  background: rgba(255, 255, 255, 0.02); border: 1px solid var(--stroke); clip-path: var(--cut); }
-.shop-thumb.has-photo { background: radial-gradient(120% 120% at 50% 12%, #fbfbfd, #ccccd4); }
-.shop-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-.shop-thumb .part-art { width: 100%; height: 100%; }
-.shop-info { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
-.shop-cat { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-.shop-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.shop-spec { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.shop-buy { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.shop-price { font-family: var(--display); font-size: 15px; font-weight: 700; color: #fff; }
-.shop-link {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; white-space: nowrap;
-  color: var(--red-bright); background: rgba(255, 37, 50, 0.1); border: 1px solid rgba(255, 37, 50, 0.4);
-  padding: 6px 10px; clip-path: var(--cut); text-decoration: none; transition: all 0.14s;
-}
-.shop-link:hover { background: var(--red); border-color: var(--red); color: #fff; }
-.shop-foot { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--stroke); display: flex; flex-direction: column; gap: 10px; }
-.shop-total-row { display: flex; align-items: baseline; justify-content: space-between; font-size: 13px; color: var(--muted); }
-.shop-total-row strong { font-family: var(--display); font-size: 26px; color: #fff; }
-.shop-missing { font-size: 12px; color: var(--warn); }
-.shop-note { font-size: 11.5px; line-height: 1.5; color: var(--muted); }
-.shop-open-all { text-align: center; text-decoration: none; }
-
 /* "Prev-gen" badge on legacy parts */
 .legacy-tag {
   position: absolute; top: 8px; right: 8px; z-index: 2;

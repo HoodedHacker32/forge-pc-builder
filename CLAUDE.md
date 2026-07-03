@@ -358,19 +358,15 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   Sources: Tom's Hardware RAM/SSD/GPU price trackers, VideoCardz, TechPowerUp, dropreference EU
   shortage data, bestvaluegpu EU. Header comment documents the shortage so the highs aren't read
   as typos. Non-memory categories (mobo/PSU/case/cooler) aren't shortage-hit and were left.
-- **2026-07-02 — "Shop this build" menu + Irish supplier (`v=21`):** owner wanted a visual
-  build list that directs buyers to reliable prices, from **one Irish supplier** (so it's a
-  single delivery with little/no shipping variance). Added a **`RETAILER`** config in `app.js`
-  (single source of truth — swap supplier in one place) set to **Elara.ie** (free nationwide IE
-  delivery, big catalog); `retailerUrl(part)` deep-links into its search by product name
-  (Magento `/catalogsearch/result/?q=`). New **`#shopModal`** (mirrors the preset modal): a
-  primary "🛒 Shop this build" button opens a visual list — each selected part as a row with its
-  photo/line-art thumb, category, name, spec, price, and a "Find at Elara ↗" link (new tab) —
-  plus the total, a "still needs" line, a single-supplier shipping note, and an "Open elara.ie"
-  button. Esc/backdrop close (Esc handler checks shop → preset → detail order). "Copy build
-  summary" demoted to a ghost button. **CAVEAT:** the exact Elara search path is unverified — the
-  site 403s bots so I couldn't fetch it; Magento pattern is the standard best-guess. If a link
-  mis-searches, it's a one-line change in `RETAILER.search`. Assets bumped `v=21`.
+- **2026-07-02 — "Shop this build" retailer feature added (`v=21`) then REMOVED (`v=23`):** a
+  visual build list with per-part buy links to a single Irish supplier was built, but the owner
+  scrapped it: "remove the buy the parts system altogether — I can just take the list to an
+  expert and ask them to build it." Supplier hunting was a rabbit hole anyway (Elara = obscure;
+  Currys.ie = ROI + ships from ROI but ~2× MSRP GPU prices, e.g. RTX 5090 €3,999, and lots OOS).
+  Removal was a clean `git checkout <v20-commit> -- js/app.js css/styles.css index.html CLAUDE.md`
+  (the feature never touched `data.js`, so the RRP prices were untouched) + a version bump to
+  `v=23`. **Don't re-add a shop/checkout/buy-links feature** unless the owner asks. The catalog
+  is a spec/price *reference* to hand to a builder, not a store.
 
 ## Repo & deployment
 
