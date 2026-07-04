@@ -111,7 +111,9 @@ function analyse(build) {
 
   /* ---- Case ↔ GPU length ---- */
   if (pcCase && gpu) {
-    if (gpu.length <= pcCase.gpu_max) {
+    if (pcCase.gpu_max == null) {
+      add('info', 'gpu', `Currys doesn't list a max GPU length for ${pcCase.name} — double-check ${gpu.name} (${gpu.length}mm) clears before buying.`);
+    } else if (gpu.length <= pcCase.gpu_max) {
       add('ok', 'gpu', `${gpu.name} (${gpu.length}mm) fits — up to ${pcCase.gpu_max}mm allowed.`);
     } else {
       add('error', 'gpu', `${gpu.name} is ${gpu.length}mm but the case allows ${pcCase.gpu_max}mm. It won't fit — pick a shorter card or bigger case.`);
@@ -121,7 +123,9 @@ function analyse(build) {
   /* ---- Case ↔ Cooler clearance ---- */
   if (pcCase && cooler) {
     if (cooler.type === 'air') {
-      if (cooler.height <= pcCase.cooler_max) {
+      if (pcCase.cooler_max == null) {
+        add('info', 'cooler', `Currys doesn't list a max cooler height for ${pcCase.name} — double-check ${cooler.name} (${cooler.height}mm) fits before buying.`);
+      } else if (cooler.height <= pcCase.cooler_max) {
         add('ok', 'cooler', `Cooler height ${cooler.height}mm clears the ${pcCase.cooler_max}mm case limit.`);
       } else {
         add('error', 'cooler', `${cooler.name} is ${cooler.height}mm tall — too big for this case (${pcCase.cooler_max}mm max). Use a shorter cooler or AIO.`);

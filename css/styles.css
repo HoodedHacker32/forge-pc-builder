@@ -404,6 +404,12 @@ body.lightbox-open { overflow: hidden; }
 }
 .currys-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
 
+.oos-note {
+  display: flex; align-items: flex-start; gap: 8px; margin: 2px 0 8px;
+  font-size: 12px; line-height: 1.45; color: #f6e2b8;
+}
+.oos-note svg { color: var(--warn); flex-shrink: 0; margin-top: 1px; }
+
 .avail-warn {
   display: flex; align-items: flex-start; gap: 9px; margin: 16px 0 4px;
   font-size: 12.5px; line-height: 1.5; color: #f6e2b8;

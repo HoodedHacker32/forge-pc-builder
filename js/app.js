@@ -240,12 +240,21 @@
       ['GPU power connector', p => p.power_conn],
     ],
     case: [
-      ['Form factor', p => p.form],
-      ['Motherboard support', p => caseBoardSupport(p.form)],
-      ['Max GPU length', p => p.gpu_max + ' mm'],
-      ['Max air-cooler height', p => p.cooler_max + ' mm'],
-      ['Radiator support', p => p.radiator],
-      ['Power supply', p => p.psu_form + ' form factor'],
+      ['Case format', p => p.format || p.form],
+      ['Motherboard support', p => p.motherboard_support || caseBoardSupport(p.form)],
+      ['Max GPU length', p => p.gpu_max ? p.gpu_max + ' mm' : 'Not listed by Currys'],
+      ['Max air-cooler height', p => p.cooler_max ? p.cooler_max + ' mm' : 'Not listed by Currys'],
+      ['Max radiator', p => p.radiator ? 'Up to ' + p.radiator + ' mm' : 'Not listed'],
+      ['Power supply', p => (p.psu_form || 'ATX') + ' form factor'],
+      ['Expansion slots', p => p.expansion_slots || '—'],
+      ['Drive bays', p => p.bays || '—'],
+      ['Front I/O', p => p.front_io || '—'],
+      ['Fans included', p => p.fans_included || '—'],
+      ['Dimensions (H×W×D)', p => p.dimensions || '—'],
+      ['Material', p => p.material || '—'],
+      ['Side panel', p => p.window || '—'],
+      ['Colour', p => p.colour || '—'],
+      ['Weight', p => p.weight || '—'],
     ],
     cooler: [
       ['Type', p => p.type === 'aio' ? 'Liquid AIO (radiator)' : 'Air tower'],
@@ -590,7 +599,8 @@
                 ${selected ? 'Remove from build' : 'Add to build'}
               </button>
             </div>
-            ${part.currys ? `<a class="currys-btn" href="${esc(part.currys)}" target="_blank" rel="noopener noreferrer">View at Currys.ie ↗</a>` : ''}
+            ${part.currys ? `<a class="currys-btn" href="${esc(part.currys)}" target="_blank" rel="noopener noreferrer">Buy this case at Currys.ie ↗</a>` : ''}
+            ${part.currys && part.inStock === false ? `<p class="oos-note">${svg('warn', 15)}<span>Out of stock at Currys right now — the price shown is its last-listed value.</span></p>` : ''}
             ${availHtml}
             ${adviceHtml}
             <h3 class="detail-h3">Specifications</h3>
@@ -897,14 +907,40 @@
     if (b) setMobileTab(b.dataset.mtab);
   });
 
-  /* ---- Boot ---- */
-  try {
-    load();
-    if (!Object.keys(build).length) activeCat = 'cpu';
-    document.body.dataset.mtab = 'parts'; // default mobile tab (ignored on desktop)
-    renderAll();
-    router(); // handle a deep-link to #/part/<id> on first load
-  } catch (err) {
-    console.error('Forge failed to render:', err);
+  /* ---- Load the Currys-scraped cases from the human-readable data file ----
+     Cases are no longer hard-coded in data.js; the scraper (currys-scraper/)
+     writes data/cases.json and the site pulls names, prices, images, buy links
+     and compatibility specs from it. */
+  async function loadCases() {
+    const res = await fetch('data/cases.json?v=31', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('cases.json HTTP ' + res.status);
+    const data = await res.json();
+    const cases = (data.cases || []).map(c => Object.assign({}, c, {
+      img: (c.images && c.images[0]) || ''
+    }));
+    PARTS.case = cases;
+    // Rebuild the multi-angle galleries used by the detail page.
+    for (const k in CASE_GALLERIES) delete CASE_GALLERIES[k];
+    cases.forEach(c => { if (c.images && c.images.length > 1) CASE_GALLERIES[c.id] = c.images; });
+    // Presets referenced the old curated case ids; point them at a live Currys
+    // case by form factor (prefer in-stock), so starter builds still work.
+    const pick = f => cases.find(c => c.form === f && c.inStock) || cases.find(c => c.form === f) || cases[0];
+    const want = { budget: 'Micro-ATX', sweet: 'ATX', ultra: 'ATX', sff: 'Mini-ITX' };
+    PRESETS.forEach(p => { const t = pick(want[p.id] || 'ATX'); if (t) p.parts.case = t.id; });
   }
+
+  /* ---- Boot ---- */
+  (async () => {
+    try { await loadCases(); }
+    catch (err) { console.error('Forge: could not load Currys case data (data/cases.json):', err); }
+    try {
+      load();
+      if (!Object.keys(build).length) activeCat = 'cpu';
+      document.body.dataset.mtab = 'parts'; // default mobile tab (ignored on desktop)
+      renderAll();
+      router(); // handle a deep-link to #/part/<id> on first load
+    } catch (err) {
+      console.error('Forge failed to render:', err);
+    }
+  })();
 })();
