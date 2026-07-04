@@ -367,6 +367,33 @@ contextual banner explains constraints ("this board needs DDR5", "cards up to 36
   (the feature never touched `data.js`, so the RRP prices were untouched) + a version bump to
   `v=23`. **Don't re-add a shop/checkout/buy-links feature** unless the owner asks. The catalog
   is a spec/price *reference* to hand to a builder, not a store.
+- **2026-07-04 — CASES now scraped live from Currys + a "Buy" button (`v=31`):** owner asked to
+  replace the whole case catalogue with **live Currys data** and put a **Buy button** on every
+  case page (this is the sanctioned exception to the "don't re-add buy-links" note above — it
+  applies to *cases only*, all other categories stay curated). What changed:
+  • **Cases are no longer hard-coded in `data.js`.** `PARTS.case` and `CASE_GALLERIES` are now
+    **empty in data.js** and populated **at runtime**: `app.js` `loadCases()` fetches
+    **`data/cases.json`** (a human-readable, committed file), maps each entry into a case part
+    (`img = images[0]`), fills `CASE_GALLERIES[id] = images`, and remaps each PRESET's case to a
+    live case by form factor. The boot is now an **async IIFE** that `await`s `loadCases()` before
+    `load()`/`renderAll()`/`router()`. If the fetch fails the app still boots (cases just empty).
+  • **`data/cases.json`** is the site's source of truth for cases — produced by the scraper, holds
+    all 93 Currys tower cases with price (EUR), `inStock`, multi-angle image **URLs** (hotlinked
+    from Currys' `media.currys.biz` CDN — owner chose URLs over downloading), `currys` buy URL, the
+    five compat fields (`form`, `gpu_max`, `cooler_max`, `psu_form`, `radiator`) + rich display
+    fields (format, dimensions, bays, front_io, fans, material, window, colour, weight).
+  • **Scraper:** `../currys-scraper/scrape.py` (sibling dir, **not** in this repo). Pure HTTP +
+    `requests` + `truststore` (see [[norton-tls-python]]); reads the owner's `cookies.txt` (from the
+    `cookie-exporter` MV3 extension, gitignored) to pass Currys' bot wall; parses Currys'
+    `tech-specification-th/-td` spec tables (labels like "Maximum GPU length/size", "Radiator mount
+    locations", "Motherboard support"). Writes `PC Builder/data/cases.json`. ~13 cases (HYTE
+    panoramic/vertical-mount) genuinely omit GPU length → left null.
+  • **compat.js** now **null-guards** the case↔GPU-length and case↔cooler-height checks: a case
+    that doesn't list the spec emits an `info` ("Currys doesn't list… double-check before buying")
+    instead of a false `error`. Keep those guards — scraped cases legitimately have missing fields.
+  • **Copyright/ToS caveat** (flagged to owner, accepted): this republishes Currys product data +
+    hotlinks their photos on a public Pages site. **`cookies.txt` must never be committed** (it's in
+    the gitignored sibling `currys-scraper/`, never in this repo).
 
 ## Repo & deployment
 
