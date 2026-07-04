@@ -590,6 +590,7 @@
                 ${selected ? 'Remove from build' : 'Add to build'}
               </button>
             </div>
+            ${part.currys ? `<a class="currys-btn" href="${esc(part.currys)}" target="_blank" rel="noopener noreferrer">View at Currys.ie ↗</a>` : ''}
             ${availHtml}
             ${adviceHtml}
             <h3 class="detail-h3">Specifications</h3>

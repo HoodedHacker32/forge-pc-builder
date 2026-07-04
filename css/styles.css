@@ -395,6 +395,15 @@ body.lightbox-open { overflow: hidden; }
 }
 
 /* ---- Detail: availability warning for cycled-out parts ---- */
+/* "View at Currys" link (present when a case has scraped Currys data) */
+.currys-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin: 2px 0 6px;
+  font-family: var(--display); font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--text); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--stroke-strong);
+  padding: 9px 15px; clip-path: var(--cut); text-decoration: none; transition: all 0.15s;
+}
+.currys-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
 .avail-warn {
   display: flex; align-items: flex-start; gap: 9px; margin: 16px 0 4px;
   font-size: 12.5px; line-height: 1.5; color: #f6e2b8;
